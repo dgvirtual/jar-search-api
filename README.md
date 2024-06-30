@@ -2,6 +2,8 @@
 
 This project allows to do a convenient search of Lithuanian company and other legal persons data, also providing an API for that purpose. 
 
+On the development side, the idea was to build an app backend using only the libraries available within PHP itself (so, no composer, no frameworks, no external database server), and simple UI libraries on the frontend (Bootstrap 5 and Alpine.js 3).
+
 ## Table of Contents
 
 - [Features](#features)
@@ -22,8 +24,11 @@ This project allows to do a convenient search of Lithuanian company and other le
 
 - PHP 7.4 or higher
 - SQLite3 module for PHP
-- Web server (Apache, with some configuration – perhaps others as well)
-- Tested mostly on Linux, should work on Windows with php as well
+- Web server (Apache or PHP's native development server; easy to adapt to other servers supporting PHP)
+
+No Composer; no external PHP libraries; no external DB (runs on SQlite3)
+
+Tested mostly on Linux, should work on Windows with php as well
 
 ## Installation
 
@@ -69,9 +74,13 @@ The app will download the necessary data and set up it's database.
 
 Web app usage is self-explanatory and detailed in the app itself. The web app also contains documentation for the usage of the API.
 
+To update the app regularly with the newest data some cronjobs need to be added to crontab. 
+
+TODO: info to be added.
+
 ## Contributing
 
-Fork the project and so some pull requests!
+Contributions are welcome! Fork the project and so some pull requests!
 
 A fork using MySQL would be appreciated, to help compare the performance of the two DB's.
 
