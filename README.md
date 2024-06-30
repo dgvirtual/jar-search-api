@@ -22,8 +22,9 @@ On the development side, the idea was to build an app backend using only the lib
 
 ## Requirements
 
-- PHP 7.4 or higher
-- SQLite3 module for PHP
+- PHP 7.4 or higher, with:
+- SQLite3, mbstring, curl PHP modules
+- exec() and shell_exec() commands not disabled (they are on some shared hosting systems)
 - Web server (Apache or PHP's native development server; easy to adapt to other servers supporting PHP)
 
 No Composer; no external PHP libraries; no external DB (runs on SQlite3)
