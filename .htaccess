@@ -1,0 +1,17 @@
+php_value display_errors On
+## set in particular scripts instead
+# php_value max_execution_time 60
+# Protect the htaccess file
+
+<Files ".htaccess">
+Order Allow,Deny
+Deny from all
+</Files>
+
+<Files "README.md">
+Order Allow,Deny
+Deny from all
+</Files>
+
+# Protect log.txt
+
