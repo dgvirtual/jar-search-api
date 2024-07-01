@@ -201,12 +201,12 @@ class mySQlite3 extends SQLite3
         return $this->changes() === 1;
     }
 
-    public function saveProgress($percent, $action)
+    public function saveProgress($percent, $next, $action)
     {
         // for testing
         //echo PHP_EOL . PHP_EOL . $percent . '|' . $action . PHP_EOL . date("H:i:s") . PHP_EOL . PHP_EOL;
 
-        $this->updateSetting('import_progress', $percent . '|' . $action);
+        $this->updateSetting('import_progress', $percent . '|' . $next . '|' . $action);
     }
     
     public function getRandomProxy(array $list = []): ?array

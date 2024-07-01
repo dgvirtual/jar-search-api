@@ -27,6 +27,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'start' && !file_exists(DBFILE
         if (!$db->tableExists('settings')) {
             $response = [
                 'progress' => 0,
+                'next' => 3,
                 'current' => 'Pradedama...'
             ];
         } else {
@@ -36,11 +37,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'start' && !file_exists(DBFILE
             // $progressData = "80|Atsisiunčiami duomenys lentelei „Individual“";
 
             // Split the data
-            list($progress, $current) = explode('|', $progressData);
+            list($progress, $next, $current) = explode('|', $progressData);
 
             // Prepare the response array
             $response = [
                 'progress' => (int)$progress,
+                'next' => (int)$next,
                 'current' => $current
             ];
         }
