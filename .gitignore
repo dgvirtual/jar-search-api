@@ -1,6 +1,5 @@
-*.db
-tmp/
 .vscode/*
 writable/*
 adminer*
 .env
+test.php
