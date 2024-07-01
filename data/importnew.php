@@ -14,7 +14,7 @@ $unreg = false;
 $postfix = '';
 
 $message = '';
-$subject = 'import.php išvestis';
+$subject = 'importnew.php išvestis';
 
 // gather variables from php command line
 if (isset($argv[1])) {
@@ -22,6 +22,7 @@ if (isset($argv[1])) {
     $unreg = in_array('unreg', $argv) && in_array('persons', $argv); //only applies on persons tbl
     $checkIfNew = in_array('checkifnew', $argv);
     $debug = in_array('debug', $argv);
+    $sendEmail = in_array('sendemail', $argv);
     $testing = in_array('testing', $argv);
 
     // gather vars from url
@@ -35,6 +36,7 @@ if (isset($argv[1])) {
         $unreg = isset($_GET['unreg']) && $_GET['table'] === 'persons';
         $checkIfNew = isset($_GET['checkifnew']);
         $debug = isset($_GET['debug']);
+        $sendEmail = isset($_GET['sendemail']);
         $testing = isset($_GET['testing']);
     } else {
         echo 'Wrong table (persons|forms|statuses)';
@@ -91,7 +93,9 @@ foreach ($fillResult as $key => $value) {
 }
 echo $message;
 
-emailAdmin('Lentelės "' . $table . '" atnaujinimo duomentys', $message);
+if ($sendEmail) {
+    emailAdmin('Lentelės "' . $table . '" atnaujinimo duomentys', $message);
+}
 
 
 $benchmark->stop();
