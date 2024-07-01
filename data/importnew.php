@@ -39,7 +39,7 @@ if (isset($argv[1])) {
         $sendEmail = isset($_GET['sendemail']);
         $testing = isset($_GET['testing']);
     } else {
-        echo 'Wrong table (persons|forms|statuses)';
+        echo 'Wrong table (persons|forms|statuses|individual)';
         exit;
     }
 } else {

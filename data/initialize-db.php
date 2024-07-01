@@ -133,15 +133,17 @@ echo 'check other tables and import data' . PHP_EOL;
 $tables = ['8|48|persons', '48|88|persons unreg', '88|91|statuses', '91|94|forms', '94|99|individual'];
 foreach ($tables as $value) {
     list($progress, $next, $tableStr) = explode('|', $value);
-    $table = explode(' ', $tableStr);
+    $tbl = explode(' ', $tableStr);
+    $table = $tbl[0];
+    $isUnregTable = (isset($tbl[1])) ? true : false;
     usleep(50000);
-    $db->saveProgress($progress, $next, 'Atsisiunčiamas duomenų failas ir jo duomenimis užpildoma lentelė „' . $table[0] . '“' . (isset($table[1]) ? '(išregistruotų JA duomenys)' : ''));
+    $db->saveProgress($progress, $next, 'Atsisiunčiamas duomenų failas ir jo duomenimis užpildoma lentelė „' . $table . '“ ' . ($isUnregTable ? '(išregistruotų JA duomenys)' : ''));
     usleep(50000);
     // apply on non-existent tables, except for persons (also run on it if it is unreg data)
-    if (!$db->tableExists($table[0]) || isset($table[1])) {
+    if (!$db->tableExists($table) || $isUnregTable) {
         //echo 'executing shell_exec';
         $importFile = BASE_DIR . 'data/importnew.php debug ' . $tableStr;
-        echo $importFile;
+        //echo $importFile;
         $output = shell_exec('php ' . $importFile . ' testing 2>&1');
 
         echo $output . PHP_EOL;
