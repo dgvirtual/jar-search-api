@@ -89,7 +89,7 @@ foreach (SCRAP_PROXIES as $key => $value) {
         "name" => "stop_" . $key,
         "value" => "false",
         "type" => "string",
-        "date" => TIMESTAMP,
+        "date" => date("Y-m-d", strtotime(TIMESTAMP . "-1 day")),
     );
 }
 
