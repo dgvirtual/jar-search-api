@@ -1,6 +1,6 @@
 *.db
 tmp/
-config.php
 .vscode/*
 writable/*
 adminer*
+.env

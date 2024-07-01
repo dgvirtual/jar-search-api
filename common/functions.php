@@ -26,3 +26,69 @@ function base_url()
     // return $protocol . '://' . $host . $path;
 
 }
+
+
+function loadEnv($filePath)
+{
+    if (!file_exists($filePath)) {
+        throw new Exception("The .env file does not exist: " . $filePath);
+    }
+
+    $lines = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        // Skip comments
+        if (strpos(trim($line), '#') === 0) {
+            continue;
+        }
+
+        // Ensure the line contains an equal sign
+        if (strpos($line, '=') === false) {
+            continue;
+        }
+
+        // Parse lines
+        list($key, $value) = explode('=', $line, 2);
+
+        $key = trim($key);
+        $value = trim($value);
+
+        // Remove surrounding quotes from the value if present
+        if (preg_match('/^["\'].*["\']$/', $value)) {
+            $value = substr($value, 1, -1);
+        }
+
+        // Check for namespaced keys
+        if (strpos($key, '.') !== false) {
+            // Split the key into parts
+            $keys = explode('.', $key);
+            $mainKey = array_shift($keys);
+
+            // Initialize the global array if not already done
+            if (!isset($GLOBALS[$mainKey])) {
+                $GLOBALS[$mainKey] = [];
+            }
+
+            // Assign the value to the nested array
+            $current = &$GLOBALS[$mainKey];
+            foreach ($keys as $part) {
+                if (!isset($current[$part])) {
+                    $current[$part] = [];
+                }
+                $current = &$current[$part];
+            }
+            $current = $value;
+        } else {
+            // Set environment variable if not already set
+            if (!getenv($key)) {
+                putenv(sprintf('%s=%s', $key, $value));
+                $_ENV[$key] = $value;
+                $_SERVER[$key] = $value;
+            }
+
+            // Define constant if not already defined
+            if (!defined($key)) {
+                define($key, $value);
+            }
+        }
+    }
+}

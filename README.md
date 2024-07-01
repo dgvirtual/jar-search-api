@@ -39,18 +39,18 @@ Tested mostly on Linux, should work on Windows with php as well
 git clone https://github.com/dgvirtual/jar-search-api.git
 ```
 
-### Step 2: Create config.php file
+### Step 2: Set up site config variables
 
 ```bash
 cd jar-search-api
-cp config-example.php config.php
+cp env .env
 ```
 
 ### Step 3: Review the settings in config.php, adjust to your environment
 
 Review and change constants (only the first two are absolutely necessary):
-  * `SUBDIR` (leave empty if the site will run at root and not in subfolder, otherwise - value is subfolder name, like `jar`)
   * `BASE_URL` (full url of the website, like `https://example.com/jar`)
+  * `SUBDIR` (leave empty if the site will run at root and not in subfolder, otherwise - value is subfolder name, like `jar`)
   * `ADMIN_EMAIL`
   * `FROM_EMAIL`
 

@@ -1,0 +1,35 @@
+####################################################
+#### PROJECT SETTINGS FIFE #########################
+####################################################
+
+# Full app url (with trailing slash, without file name at the end)
+BASE_URL='http://localhost:5000/'
+
+# Change to the subdir(s) of your project, leave empty if the app is at the website root.
+# E.g., leave empty if your index file is https://example.com/index.php, 
+# set to 'jar' if it is at https://example.com/jar/index.php
+SUBDIR=''
+
+# Admin email, at which the app should send messages
+ADMIN_EMAIL='dg@lapas.info'
+
+# The email the site should use in the from field
+# For emailing to work you have to have smtp server running on your server
+EMAIL_FROM='Juridinių asmenų paieška <jar@pr.lapas.info>'
+
+PROXY_API_KEY='SomeVerySecretKEy'
+
+# list the 
+SCRAP_PROXIES.proxy_here='BASE_URLdata/getfile.php?apikey=PROXY_API_KEY&url='
+#SCRAP_PROXIES.proxy_on_my_domain='https://example.com/getfile.php?apikey=PROXY_API_KEY&url='
+
+# TODO: change
+OPEN_DATA_INDIVIDUAL_URL='https://pr.lapas.info/jar/data/scrapit.php?download=individual'
+
+# Database file, relative to the project root
+DBFILE='writable/legal_persons.db'
+
+######################################################
+#### LOOKUP OTHER POSSIBLE ENTRIES ON FILE ###########
+#### TO USE HERE IN FILE config.php ##################
+######################################################
