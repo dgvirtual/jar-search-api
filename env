@@ -19,7 +19,8 @@ EMAIL_FROM='Juridinių asmenų paieška <jar@pr.lapas.info>'
 
 PROXY_API_KEY='SomeVerySecretKEy'
 
-# list the 
+# List the proxies to be used for legal persons name retrieval
+# each subkey HAS to start with 'proxy_' (like the line below)
 SCRAP_PROXIES.proxy_here='BASE_URLdata/getfile.php?apikey=PROXY_API_KEY&url='
 #SCRAP_PROXIES.proxy_on_my_domain='https://example.com/getfile.php?apikey=PROXY_API_KEY&url='
 

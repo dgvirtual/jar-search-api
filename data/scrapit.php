@@ -45,7 +45,7 @@ if (isset($argv[1]) && in_array('update', $argv)) {
         $lastUpdate = $db->getSetting('individual_last_update');
         $lastImport = $db->getSetting('data_formed_persons');
         if ($lastUpdate < $lastImport) {
-            $message .= 'Nereikia pilni atnaujinimo. Vykdymas nutraukiamas' . "\n";
+            $message .= 'Nereikia pilno atnaujinimo. Vykdymas nutraukiamas' . "\n";
             emailAdmin($subject, $message);
             exit;
         }
@@ -126,7 +126,7 @@ if (isset($_GET['key']) && $_GET['key'] === $proxy_key) {
 
 
 // reset to unstopped if they were stopped not today
-$date_proxy_stopped = substr($db->getSetting('stop_proxy_religija', true)['date'], 0, 10);
+$date_proxy_stopped = substr($db->proxiesStoppedOn(), 0, 10);
 if ($date_proxy_stopped < date('Y-m-d')) {
     $db->updateStopProxySettings(false);
 }

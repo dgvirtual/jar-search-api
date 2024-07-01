@@ -208,7 +208,30 @@ class mySQlite3 extends SQLite3
 
         $this->updateSetting('import_progress', $percent . '|' . $next . '|' . $action);
     }
-    
+
+    public function proxiesStoppedOn()
+    {
+        $sql = "SELECT date FROM settings WHERE name LIKE 'stop_proxy_%' LIMIT 1";
+
+        $stmt = $this->prepare($sql);
+
+        $result = $stmt->execute();
+
+        if (!$result) {
+            echo "Error retrieving proxy, " . $this->lastErrorMsg();  // Consider logging instead of echoing
+            return null;
+        }
+
+        // Fetch the retrieved row
+        $row = $result->fetchArray(SQLITE3_ASSOC);
+
+        if (!$row) {
+            return null; // Setting not found
+        }
+
+        return $row['date'];
+    }
+
     public function getRandomProxy(array $list = []): ?array
     {
         if (empty($list))
