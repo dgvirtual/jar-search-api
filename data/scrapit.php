@@ -37,6 +37,8 @@ if (!isset($db)) {
  * statistics gathering and update of persons table block
  */
 
+$sendEmail = (isset($argv[1]) && in_array('sendemail', $argv));
+
 if (isset($argv[1]) && in_array('update', $argv)) {
 
     $total = false;
@@ -46,7 +48,8 @@ if (isset($argv[1]) && in_array('update', $argv)) {
         $lastImport = $db->getSetting('data_formed_persons');
         if ($lastUpdate < $lastImport) {
             $message .= 'Nereikia pilno atnaujinimo. Vykdymas nutraukiamas' . "\n";
-            emailAdmin($subject, $message);
+            if ($sendEmail)
+                emailAdmin($subject, $message);
             exit;
         }
         $total = true;
@@ -69,7 +72,8 @@ if (isset($argv[1]) && in_array('update', $argv)) {
     $message .= "Gauta pavadinimų iš viso: " . $stats['totalRecords'] . "\n";
     $message .= "Šiandien atnaujinta pavadinimų: " . $noUpdated . "\n";
 
-    emailAdmin($subject, $message);
+    if ($sendEmail)
+        emailAdmin($subject, $message);
     exit;
 }
 
@@ -83,8 +87,8 @@ if (isset($argv[1]) && in_array('report', $argv)) {
 
     echo $subject . PHP_EOL;
     echo $message;
-
-    emailAdmin($subject, $message);
+    if ($sendEmail)
+        emailAdmin($subject, $message);
     exit;
 }
 
