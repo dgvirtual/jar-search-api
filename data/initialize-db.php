@@ -3,13 +3,12 @@
 if (!isset($argv[1]) || (isset($argv[1]) && $argv[1] !== 'initial')) {
     return 0;
 }
-require_once('config.php');
-//require_once(BASE_DIR . 'data/data-functions.php');
+require_once(__DIR__ . '/../config.php');
 require_once(BASE_DIR . 'common/classes.php');
 
 echo '<pre>';
 if (!isset($db)) {
-    $db = new mySQLite3(DBFILE);
+    $db = new mySQLite3(BASE_DIR . DBFILE);
 }
 
 // if settings are ok, do not execute further statements

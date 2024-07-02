@@ -1,6 +1,6 @@
 <?php
 
-require_once('config.php');
+require_once(__DIR__ . '/config.php');
 if (!file_exists(DBFILE)) {
     header("Location:" . BASE_URL . "import.php");
     die();
@@ -14,7 +14,7 @@ require_once('common/classes.php');
 
 // Connect to the SQLite database
 if (!isset($db)) {
-    $db = new mySQLite3(DBFILE);
+    $db = new mySQLite3(BASE_DIR . DBFILE);
 }
 
 // Handle the request

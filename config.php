@@ -95,7 +95,7 @@ if (!defined("OPEN_DATA_INDIVIDUAL_URL"))
  * Name and place of the database file.
  */
 if (!defined("DBFILE"))
-    define('DBFILE', BASE_DIR . 'writable/jar.db');
+    define('DBFILE', 'writable/jar.db');
 
 /**
  * Default timestamp to use in the db.

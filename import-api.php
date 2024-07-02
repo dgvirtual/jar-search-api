@@ -1,5 +1,5 @@
 <?php
-require_once('config.php');
+require_once(__DIR__ . '/config.php');
 
 // $db = new DatabaseConnection();
 require_once('common/classes.php');
@@ -18,7 +18,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'start' && !file_exists(DBFILE
     header('Content-Type: application/json');
     echo json_encode(['status' => 'OK']);
 } elseif (isset($_GET['action']) && $_GET['action'] === 'progress') {
-    $db = new mySQLite3(DBFILE);
+    $db = new mySQLite3(BASE_DIR . DBFILE);
 
     header('Content-Type: application/json');
 

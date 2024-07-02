@@ -54,7 +54,7 @@ if ($unreg) {
 $benchmark = new Benchmark();
 $benchmark->start();
 
-$db = new mySQLite3(DBFILE);
+$db = new mySQLite3(BASE_DIR . DBFILE);
 //enable concurrent reads while write is in progress
 $db->exec('PRAGMA journal_mode = WAL;');
 

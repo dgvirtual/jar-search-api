@@ -17,7 +17,7 @@
  * debug= - echo data to the browser
  */
 
-require_once('../config.php');
+require_once(__DIR__ . '/../config.php');
 require_once(BASE_DIR . 'data/data-functions.php');
 require_once(BASE_DIR . 'common/classes.php');
 require_once(BASE_DIR . 'common/functions.php');
@@ -30,7 +30,7 @@ $message = '';
 $subject = 'scrapit.php išvestis';
 
 if (!isset($db)) {
-    $db = new mySQLite3(DBFILE);
+    $db = new mySQLite3(BASE_DIR . DBFILE);
 }
 
 /**

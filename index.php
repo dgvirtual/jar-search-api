@@ -1,5 +1,5 @@
 <?php
-require_once('config.php');
+require_once(__DIR__ . '/config.php');
 require_once('front/front-functions.php');
 if (!file_exists(DBFILE)) {
     header("Location:" . BASE_URL . "import.php");
