@@ -30,6 +30,9 @@ class mySQlite3 extends SQLite3
             // Match whole words only
             return preg_match("/\b$pattern\b/u", $str);
         }, 2);
+
+        // set timeout for database operations
+        $this->exec('PRAGMA busy_timeout = 2000;');
     }
     /**
      * database helper functions
