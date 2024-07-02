@@ -122,14 +122,11 @@ $db->saveProgress('3', '6', 'Kuriama duomenų bazė ...');
 usleep(500000);
 $db->saveProgress('6', '8', 'Kuriama lentelė „settings“, ji užpildoma duomenimis...');
 
-
 echo 'check other tables and import data' . PHP_EOL;
-
-
 
 // cycle through the other tables
 // '8|48|persons' - means: processing table persons starts at 8% and ends at 48% of progress
-$tables = ['8|48|persons', '48|88|persons unreg', '88|91|statuses', '91|94|forms', '94|99|individual'];
+$tables = ['8|52|persons', '52|89|persons unreg', '89|91|statuses', '91|93|forms', '93|96|individual'];
 foreach ($tables as $value) {
     list($progress, $next, $tableStr) = explode('|', $value);
     $tbl = explode(' ', $tableStr);
@@ -147,8 +144,14 @@ foreach ($tables as $value) {
 
         echo $output . PHP_EOL;
     }
-    usleep(500000);
+    
 }
+
+usleep(50000);
+$db->saveProgress('96', '100', 'Atnaujinami individualių įmonių ir komanditinių ūkinių bendrovių pavadinimai');
+$output = shell_exec('php ' . BASE_DIR . 'data/scrapit.php update forcetotal 2>&1');
+echo $output . PHP_EOL;
+usleep(500000);
 $db->saveProgress('100', '100', 'Duomenų importavimas baigtas');
 echo 'DATA IMPORT DONE, NOW RELOAD THE PAGE';
 
