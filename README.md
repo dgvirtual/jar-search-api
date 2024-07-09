@@ -11,6 +11,7 @@ On the development side, the idea was to build an app backend using only the lib
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Usage](#usage)
+- [Keeping data up-to-date](#keeping-data-up-to-date)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -79,7 +80,7 @@ To update the app regularly with the newest data some cronjobs need to be added 
 
 TODO: info to be added.
 
-## Cronjobs
+## Keeping data up to date
 To update the data in the app cron functionality can be used. 
 
 Here is a sample cron script: 
