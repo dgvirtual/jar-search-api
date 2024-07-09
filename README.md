@@ -79,6 +79,60 @@ To update the app regularly with the newest data some cronjobs need to be added 
 
 TODO: info to be added.
 
+## Cronjobs
+To update the data in the app cron functionality can be used. 
+
+Here is a sample cron script: 
+
+```bash
+## ensure no output is sent by cron itself
+MAILTO=''
+## run scrapping script continuously at the end of the day
+18 22 * * * /var/www/projectdir/run_scrapping_script.sh
+## report the results of scrapping (email is sent by php script itself)
+59 23 * * * /usr/bin/php /var/www/projectdir/public/jar/data/scrapit.php report
+## check and import new data from RC: each individual csv file at the beginning of the month
+30 0 1-5 * * /usr/bin/php /var/www/projectdir/public/jar/data/importnew.php checkifnew persons
+31 0 1-5 * * /usr/bin/php /var/www/projectdir/public/jar/data/importnew.php checkifnew persons unreg
+32 0 1-5 * * /usr/bin/php /var/www/projectdir/public/jardata/importnew.php checkifnew forms
+34 0 1-5 * * /usr/bin/php /var/www/projectdir/public/jar/data/importnew.php checkifnew statuses
+## run big update of individual enterprises names at the start of the month
+50 0 1-5 * * /usr/bin/php /var/www/projectdir/public/jar/data/scrapit.php update ifnewmonth
+## run daily update of individual enterprises names
+55 0 * * * /usr/bin/php /var/www/projectdir/public/jar/data/scrapit.php update
+## daily export of individual enterprises names to a new file (for others to import)
+56 0 * * * /usr/bin/php /var/www/projectdir/public/jar/data/scrapit.php export_individual
+```
+
+And here is the bash script to run the scrapping script example (`run_scrapping_script.sh`):
+
+```bash
+#!/bin/bash
+
+# Check for verbose flag
+verbose=false
+if [ "$1" == "-v" ]; then
+    verbose=true
+fi
+
+# Function to print messages if verbose is enabled
+log() {
+    if [ "$verbose" == true ]; then
+        echo "$1"
+    fi
+}
+
+# Loop to run the script every 3 seconds 1000 times (about 1 hour, good for 5 proxies)
+for ((i=0; i<1000; i++)); do
+    log "Executing PHP script at $(date), count: $i"
+    /usr/bin/php /var/www/projectdir/public/jar/data/scrapit.php
+    log "Sleeping for 3 seconds"
+    sleep 3
+done
+
+log "Executed script $i times, done"
+```
+
 ## Contributing
 
 Contributions are welcome! Fork the project and so some pull requests!
