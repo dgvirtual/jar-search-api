@@ -10,12 +10,12 @@ function emailAdmin($subject, $message)
 function base_url()
 {
     return BASE_URL;
-   
+
     //  $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-     
+
     //  // Get the host (domain name)
     //  $host = $_SERVER['HTTP_HOST'];
-     
+
     //  if (substr($host, 0, 5) === 'local' || SUBDIR === '') {
     //     $path = '/';
     // } else {

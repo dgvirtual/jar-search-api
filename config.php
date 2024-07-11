@@ -63,9 +63,10 @@ if (isset($GLOBALS['SCRAP_PROXIES']) && is_array($GLOBALS['SCRAP_PROXIES'])) {
     define('SCRAP_PROXIES', $GLOBALS['SCRAP_PROXIES']);
 } else {
     define('SCRAP_PROXIES', array(
-        'proxy_here' => getenv('BASE_URL') . '/data/getfile.php?apikey=' . getenv('PROXY_API_KEY') . '&url='
+        'proxy_here' => getenv('BASE_URL') . 'data/getfile.php?apikey=' . getenv('PROXY_API_KEY') . '&url='
     ));
 }
+
 
 /***********************************************************************
  *** Beyond this point you will probably not have to change anything ***

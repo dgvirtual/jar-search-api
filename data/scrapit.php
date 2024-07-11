@@ -137,8 +137,9 @@ if ($date_proxy_stopped < date('Y-m-d')) {
 
 $list = $db->getUnstoppedProxies();
 
-if (isset($_GET['debug'])) {
+if (isset($_GET['debug']) || isset($argv[1]) && in_array('debug', $argv)) {
     echo '<pre>';
+    echo 'Unstopped proxies: ' . PHP_EOL;
     var_dump($list);
 }
 
@@ -153,7 +154,7 @@ $newEntry = $db->getOldestIndividualEntry();
 
 $url = $proxy['value'] . RC_WEB . SCRAP_URL . $newEntry['ja_kodas'];
 
-if (isset($_GET['debug'])) {
+if (isset($_GET['debug']) || isset($argv[1]) && in_array('debug', $argv)) {
 
     var_dump('url: ' . $url);
 }
@@ -162,7 +163,7 @@ $content = getPageContent($url);
 
 $result = retrieveInfo($content, $newEntry['ja_kodas']);
 
-if (isset($_GET['debug'])) {
+if (isset($_GET['debug']) || isset($argv[1]) && in_array('debug', $argv)) {
     var_dump(['result: ', $result]);
 }
 
@@ -177,7 +178,7 @@ if ($result['status'] === 'Success') {
     $db->touchSetting($proxy['name']);
 } // else: do nothing: cases of ""
 
-if (isset($_GET['debug'])) {
+if (isset($_GET['debug']) || isset($argv[1]) && in_array('debug', $argv)) {
     var_dump($db->getIndividualRecordCounts());
 }
 
