@@ -272,11 +272,9 @@ class mySQlite3 extends SQLite3
     public function getUnstoppedProxies(): array
     {
         // Prepare the SQL statement with placeholder
-        $excludeScraper = date('Y-m-d') < '2024-07-10' ? " AND NAME NOT LIKE '%scraper%'" : "";
         $sql = "SELECT SUBSTR(name, 6) AS proxy_name 
           FROM settings 
           WHERE name LIKE ? " .
-            $excludeScraper .
             " AND value = ?";
 
         $stmt = $this->prepare($sql);
