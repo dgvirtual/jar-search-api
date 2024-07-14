@@ -7,29 +7,33 @@ class mySQlite3 extends SQLite3
     {
         parent::__construct($filename);
 
-        // add collation; this is not universal, we assume the collation 
-        // will be called utf8_lithuanian_ci
-        $this->createCollation('utf8_lithuanian_ci', function ($a, $b) {
-            return strcoll($a, $b);
-        });
+        // try to load ICU extension, if not available, use (slower) PHP functions
+        // for compatibility with mysql, call collation utf8_lithuanian_ci
+        if ($this->loadExtension('libSqliteIcus.so')) {
+            $this->exec("SELECT icu_load_collation('lt', 'utf8_lithuanian_ci')");
+        } else {
+            $this->createCollation('utf8_lithuanian_ci', function ($a, $b) {
+                return strcoll($a, $b);
+            });
 
-        // normalization function, replacing default lower
-        $this->createFunction('LOWER', function ($str) {
-            return mb_strtolower($str);
-        });
+            // normalization function, replacing default lower
+            $this->createFunction('LOWER', function ($str) {
+                return mb_strtolower($str);
+            });
 
-        // my own like function
-        $this->createFunction('REGEXP', function ($pattern, $str) {
-            // Remove trailing dots from the pattern and escape special characters
-            $pattern = rtrim($pattern, '.,;');
-            $pattern = preg_quote(
-                $pattern,
-                '/'
-            );
+            // my own like function
+            $this->createFunction('REGEXP', function ($pattern, $str) {
+                // Remove trailing dots from the pattern and escape special characters
+                $pattern = rtrim($pattern, '.,;');
+                $pattern = preg_quote(
+                    $pattern,
+                    '/'
+                );
 
-            // Match whole words only
-            return preg_match("/\b$pattern\b/u", $str);
-        }, 2);
+                // Match whole words only
+                return preg_match("/\b$pattern\b/u", $str);
+            }, 2);
+        }
 
         // set timeout for database operations
         $this->exec('PRAGMA busy_timeout = 2000;');
