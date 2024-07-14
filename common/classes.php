@@ -9,7 +9,7 @@ class mySQlite3 extends SQLite3
 
         // try to load ICU extension, if not available, use (slower) PHP functions
         // for compatibility with mysql, call collation utf8_lithuanian_ci
-        if ($this->loadExtension('libSqliteIcus.so')) {
+        if ($this->loadExtension('libSqliteIcu.so')) {
             $this->exec("SELECT icu_load_collation('lt', 'utf8_lithuanian_ci')");
         } else {
             $this->createCollation('utf8_lithuanian_ci', function ($a, $b) {
