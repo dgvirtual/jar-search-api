@@ -24,11 +24,17 @@ PROXY_API_KEY='SomeVerySecretKEy'
 SCRAP_PROXIES.proxy_here='BASE_URLdata/getfile.php?apikey=PROXY_API_KEY&url='
 #SCRAP_PROXIES.proxy_on_my_domain='https://example.com/getfile.php?apikey=PROXY_API_KEY&url='
 
-# TODO: change
+## Points to download script on my demo app; can change to yours
 OPEN_DATA_INDIVIDUAL_URL='https://pr.lapas.info/jar/data/scrapit.php?download=individual'
 
 # Database file, relative to the project root
 DBFILE='writable/database.db'
+
+# SQLite3 ICU extension file name (usually libSqliteIcu.so on Unix systems)
+# if enabled, makes queries faster than custom PHP functions
+# see tutorial at https://dg.lapas.info/irasas/enhancing-sqlite3-with-icu-extension/ 
+# You can try using the two binaries distributed with this app (files libSqliteIcu_*.so)
+SQLITE_ICU_EXT=''
 
 ######################################################
 #### LOOKUP OTHER POSSIBLE ENTRIES ####### ###########

@@ -47,6 +47,12 @@ if (!defined("PROXY_API_KEY"))
     define('PROXY_API_KEY', 'SomeVerySecretKEy');
 
 /**
+ * SQLite3 ICU extension binary path, if it is available
+ */
+if (!defined("SQLITE_ICU_EXT"))
+    define('SQLITE_ICU_EXT', '');
+
+/**
  * Define here all proxies that you will use to scrape data from the website of the center of registers.
  * You have one on this project itself by default
  */

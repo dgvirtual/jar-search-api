@@ -12,7 +12,7 @@ On the development side, the idea was to build an app backend using only the lib
 - [Configuration](#configuration)
 - [Usage](#usage)
 - [Keeping data up-to-date](#keeping-data-up-to-date)
-- [Contributing](#contributing)
+- [Speeding up search](#speeding-up-search)
 - [License](#license)
 
 ## Features
@@ -126,13 +126,21 @@ log() {
 # Loop to run the script every 3 seconds 1000 times (about 1 hour, good for 5 proxies)
 for ((i=0; i<1000; i++)); do
     log "Executing PHP script at $(date), count: $i"
-    /usr/bin/php /var/www/projectdir/public/jar/data/scrapit.php
+    /usr/bin/php /var/www/YOUR_PROJECTDIR/public/jar/data/scrapit.php
     log "Sleeping for 3 seconds"
     sleep 3
 done
 
 log "Executed script $i times, done"
 ```
+
+## Speeding up search
+Enabling SQLite3 ICU extension will halve the speed of most time-consuming searches. 
+See tutorial [Enhancing SQlite3 with ICU extension](https://dg.lapas.info/irasas/enhancing-sqlite3-with-icu-extension/) 
+on how to do that on Ubuntu. If you are running this app on Linux, you can try using one of tthe two binaries distributed 
+with this app (files libSqliteIcu_*.so, with sqlite version and Ubuntu version specified in the file name).
+
+The ICU extension name should be put into the constant `SQLITE_ICU_EXT` in `.env` file.
 
 ## Contributing
 
