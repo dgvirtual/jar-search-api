@@ -12,7 +12,17 @@
  * config.php
  */
 
-$proxyApiKey = PROXY_API_KEY; // replace with a string key in case of placement outside this app
+/******************************************************
+ ********* MODIFY IF USED OUTSIDE THIS PROJECT********* 
+ **************COMMENT OUT require_once()**************
+ * replace $proxyApiKey value with a string you chose *
+ ******************************************************/
+require_once(__DIR__ . '/../config.php');
+$proxyApiKey = PROXY_API_KEY;
+/******************************************************
+ ******** / MODIFY IF USED OUTSIDE THIS PROJECT******** 
+ ******************************************************/
+
 
 // Allow CORS for any domain: only needed on browser access
 header("Access-Control-Allow-Origin: *");
