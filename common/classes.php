@@ -335,9 +335,10 @@ class mySQlite3 extends SQLite3
 
     public function getOldestIndividualEntry()
     {
+        // where lists the codes of legal forms to search
         $sql = "SELECT persons.ja_kodas, individual.tikr_data FROM persons
         LEFT JOIN individual ON persons.ja_kodas = individual.ja_kodas
-        WHERE (persons.form_kodas = 810 OR persons.form_kodas = 220) AND persons.stat_kodas != 10
+        WHERE (persons.form_kodas = 810 OR persons.form_kodas = 811 OR persons.form_kodas = 812 OR persons.form_kodas = 220) AND persons.stat_kodas != 10
         ORDER BY tikr_data ASC 
         LIMIT 1";
         $stmt = $this->prepare($sql);
