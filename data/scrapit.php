@@ -77,9 +77,11 @@ if (isset($argv[1]) && in_array('update', $argv)) {
     exit;
 }
 
-if (isset($argv[1]) && in_array('report', $argv)) {
+if ((isset($argv[1]) && in_array('report', $argv)) || isset($_GET['report'])) {
 
     $stats = $db->getIndividualRecordCounts();
+
+    if (isset($_GET['report'])) echo "<pre>";
 
     $message .= "Viso veikiančių individualių įmonių ir komanditinių ūkinių bendrijų nesutvarkytais pavadinimais: " . $stats['targetRecords'] . "\r\n";
     $message .= "Gautų (sutvarkytų) pavadinimų iš viso: " . $stats['totalRecords'] . "\r\n";
