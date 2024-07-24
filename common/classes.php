@@ -441,11 +441,15 @@ class mySQlite3 extends SQLite3
         SELECT COUNT(*) as count 
         FROM persons 
         LEFT JOIN individual ON individual.ja_kodas = persons.ja_kodas
-        WHERE (form_kodas = :code1 OR form_kodas = :code2) AND stat_kodas != :code3 AND individual.tikr_data IS NULL
+        WHERE (form_kodas = :code1 OR form_kodas = :code11 OR form_kodas = :code12 OR form_kodas = :code2) AND stat_kodas != :code3 AND individual.tikr_data IS NULL
         ');
         $ind_kodas = 810;
+        $ind_kodas2 = 811;
+        $ind_kodas3 = 812;
         $kom_kodas = 220;
         $stmt2->bindValue(':code1', $ind_kodas, SQLITE3_INTEGER);
+        $stmt2->bindValue(':code11', $ind_kodas2, SQLITE3_INTEGER);
+        $stmt2->bindValue(':code12', $ind_kodas3, SQLITE3_INTEGER);
         $stmt2->bindValue(':code2', $kom_kodas, SQLITE3_INTEGER);
         $stat_kodas = 10;
         $stmt2->bindValue(':code3', $stat_kodas, SQLITE3_INTEGER);
