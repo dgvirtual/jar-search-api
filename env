@@ -13,9 +13,9 @@ SUBDIR=''
 # Admin email, at which the app should send messages
 ADMIN_EMAIL='me@example.com'
 
-# The email the site should use in the from field
+# The email the site should use in the from field 
 # For emailing to work you have to have smtp server running on your server
-EMAIL_FROM='Juridinių asmenų paieška <jar@example.com>'
+FROM_EMAIL='Juridinių asmenų paieška <jar@example.com>'
 
 PROXY_API_KEY='SomeVerySecretKEy'
 

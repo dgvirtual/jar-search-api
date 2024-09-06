@@ -137,7 +137,7 @@ log "Executed script $i times, done"
 ## Speeding up search
 Enabling SQLite3 ICU extension will halve the speed of most time-consuming searches. 
 See tutorial [Enhancing SQlite3 with ICU extension](https://dg.lapas.info/irasas/enhancing-sqlite3-with-icu-extension/) 
-on how to do that on Ubuntu. If you are running this app on Linux, you can try using one of tthe two binaries distributed 
+on how to do that on Ubuntu. If you are running this app on Linux, you can try using one of the two binaries distributed 
 with this app (files libSqliteIcu_*.so, with sqlite version and Ubuntu version specified in the file name).
 
 The ICU extension name should be put into the constant `SQLITE_ICU_EXT` in `.env` file.
