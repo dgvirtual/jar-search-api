@@ -464,7 +464,12 @@ class mySQlite3 extends SQLite3
         ];
     }
 
-    public function exportIndividualToCsv($csvFile = BASE_DIR . 'writable/individual.csv')
+    /**
+     * Export invididual enterprises data to CSV file
+     * 
+     * @param $csvFile - local path to the CSV file
+     */
+    public function exportIndividualToCsv(string $csvFile = 'writable/individual.csv')
     {
 
         $csvFile = BASE_DIR . $csvFile;
