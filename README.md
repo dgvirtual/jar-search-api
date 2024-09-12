@@ -95,7 +95,7 @@ MAILTO=''
 ## check and import new data from RC: each individual csv file at the beginning of the month
 30 0 1-5 * * /usr/bin/php /var/www/projectdir/public/jar/data/importnew.php checkifnew persons
 31 0 1-5 * * /usr/bin/php /var/www/projectdir/public/jar/data/importnew.php checkifnew persons unreg
-32 0 1-5 * * /usr/bin/php /var/www/projectdir/public/jardata/importnew.php checkifnew forms
+32 0 1-5 * * /usr/bin/php /var/www/projectdir/public/jar/data/importnew.php checkifnew forms
 34 0 1-5 * * /usr/bin/php /var/www/projectdir/public/jar/data/importnew.php checkifnew statuses
 ## run big update of individual enterprises names at the start of the month
 50 0 1-5 * * /usr/bin/php /var/www/projectdir/public/jar/data/scrapit.php update ifnewmonth
