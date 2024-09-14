@@ -1,5 +1,30 @@
 <?php if (count(get_included_files()) == 1) die('This file is not meant to be accessed directly.');
 
+function logRequest(array $request): void
+{
+    $logFilePath = BASE_DIR . 'writable/logs/' . date('Y-m-d') . '.log';
+    $logData = date('Y-m-d H:i:s') . ' - ';
+
+    foreach ($request as $key => $value) {
+        if (!empty($value)) {
+            $logData .= "$key=$value ";
+        }
+    }
+
+    $logData = rtrim($logData) . PHP_EOL;
+    file_put_contents($logFilePath, $logData, FILE_APPEND);
+}
+
+function getDailyLogContent()
+{
+    $logFilePath = BASE_DIR . 'writable/logs/' . date('Y-m-d') . '.log';
+    if (file_exists($logFilePath)) {
+        $logContent = file_get_contents($logFilePath);
+        return "This is what the users have been searching for today:\n\n" . $logContent;
+    } else {
+        return "No user searches today.";
+    }
+}
 
 function emailAdmin($subject, $message)
 {
