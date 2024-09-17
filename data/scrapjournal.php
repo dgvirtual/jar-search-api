@@ -167,14 +167,10 @@ $unregistered = [];
 $updated = [];
 $statuses_list = [];
 $individual = 0;
+$individual_fail = 0;
+
 foreach ($entities as $entity) {
 
-    if (!in_array($entity['statusas'], $statuses_list)) {
-        $statuses_list[] = $entity['statusas'];
-    }
-
-
-    if (str_contains($entity['forma'], 'Individuali')) $individual++;
     if (!isset($revForms[$entity['forma']]) || !isset($revStatuses[$entity['statusas']])) {
         $entity['problem'] = 'missing form or status';
         $defective[] = $entity;
@@ -194,17 +190,6 @@ foreach ($entities as $entity) {
         $entity['form_kodas'] = $revForms[$entity['forma']];
         $entity['stat_kodas'] = $revStatuses[$entity['statusas']];
 
-        // if (in_array($entity['ja_kodas'], [306984502])) {
-        //     var_dump($entity);
-        // }
-
-        // echo $entity['ja_kodas'];
-        // echo ': ';
-        // echo $entity['stat_kodas'];
-        // echo ' -- ';
-        // echo $entity['statusas'];
-        // echo PHP_EOL;
-
         if ($revStatuses[$entity['statusas']] !== $row['stat_kodas']) {
             $entity['stat_data_nuo'] = $entity['pakeit_data'];
         }
@@ -221,18 +206,6 @@ foreach ($entities as $entity) {
         $case = 'exists'; // while it should not
     } else {
         $case = 'register';
-
-        // if (in_array($entity['ja_kodas'], [306984502])) {
-        //     var_dump($entity);
-        // }
-
-        // echo $entity['ja_kodas'];
-        // echo ': ';
-        // echo $entity['stat_kodas'];
-        // echo ' -- ';
-        // echo $entity['statusas'];
-        // echo PHP_EOL;
-
     }
 
     if ($case === 'register') {
@@ -335,6 +308,49 @@ foreach ($entities as $entity) {
             $entity['problem'] = 'Database inserting problem';
             $defective[] = $entity;
         }
+
+
+        // now enter into individual table
+        if (in_array((int) $revStatuses[$entity['statusas']], [810, 811, 812, 220])) {
+
+            // Prepare the insert query
+            if ($case === 'register') {
+
+                $query = $db->prepare('
+                INSERT INTO individual (ja_kodas, ja_pavadinimas, tikr_statusas, tikr_data) 
+                VALUES (:ja_kodas, :ja_pavadinimas, :tikr_statusas, :tikr_data)
+                ');
+            } else {
+                $query = $db->prepare('UPDATE persons SET ja_pavadinimas = :ja_pavadinimas, tikr_statusas = :tikr_statusas, tikr_data = :tikr_data WHERE ja_kodas = :ja_kodas');
+            }
+            $query->bindValue(':ja_kodas',
+                $entity['ja_kodas'],
+                SQLITE3_INTEGER
+            );
+            $query->bindValue(
+                ':ja_pavadinimas',
+                $entity['ja_pavadinimas'],
+                SQLITE3_TEXT
+            );
+            $query->bindValue(
+                ':tikr_statusas',
+                'Success',
+                SQLITE3_TEXT
+            );
+            $query->bindValue(':tikr_data',
+                ($entity['ja_reg_data'] ?? $entity['pakeit_data']),
+                SQLITE3_INTEGER
+            );
+            // Execute the insert query
+            $result = $query->execute();
+
+            if ($result) {
+                $individual++;
+            } else {
+                $individual_fail++;
+            }
+        }
+
     }
 }
 //echo 'statuses_list: ' . PHP_EOL;
@@ -350,7 +366,7 @@ if ((isset($argv[1]) && in_array('report', $argv)) || isset($_GET['report'])) {
     $message .= "Įregistruota:" . count($registered) . "\r\n";
     $message .= "Išregistruota:" . count($unregistered) . "\r\n";
     $message .= "Atnaujinta:" . count($updated) . "\r\n";
-    $message .= "Individualių įmonių: " . $individual . "\r\n";;
+    $message .= "Individualių įmonių/komanditinių bendrovių: " . $individual . '(nepavyko: ' . $individual_fail . ")\r\n";
     $message .= "\n=======================\n\n";
 
     //var_dump($defective);
