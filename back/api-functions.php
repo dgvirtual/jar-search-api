@@ -177,7 +177,7 @@ function scrapHtml(int $id, $date = null)
             $cols = $row->getElementsByTagName('td');
             if ($cols->length >= 4) {
                 $docDate = trim($cols->item(3)->textContent);
-                if (strtotime($docDate) >= strtotime($dateThreshold)) {
+                if (strtotime($docDate) > strtotime($dateThreshold)) {
                     $documentArray[] = [
                         'naujas_dok' => trim($cols->item(0)->textContent),
                         'dok_reg_data' => $docDate
