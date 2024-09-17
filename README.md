@@ -17,7 +17,7 @@ On the development side, the idea was to build an app backend using only the lib
 
 ## Features
 
-- Automatically imports legal persons data from VĮ Registrų centras (initially and, if configured via cron - regularly)
+- Automatically imports legal persons data from VĮ Registrų centras (initially and, if configured via cron - regularly, so the data is only up to 1 day old)
 - Offers convenient search by legal person code, name, address, legal form, legal status, registration date, etc.
 - Offers free API to use outside of this tool's scope 
 
@@ -103,6 +103,8 @@ MAILTO=''
 55 0 * * * /usr/bin/php /var/www/projectdir/public/jar/data/scrapit.php update
 ## daily export of individual enterprises names to a new file (for others to import)
 56 0 * * * /usr/bin/php /var/www/projectdir/public/jar/data/scrapit.php export_individual
+## the RC journal is published at about 6:30 AM Vilnius time; scrap it before the work day starts
+30 7 * * * /usr/bin/php /var/www/projektai/public/jar/data/scrapjournal.php report sendemail
 ```
 
 And here is the bash script to run the scrapping script example (`run_scrapping_script.sh`):

@@ -96,3 +96,98 @@ function downloadCsv($file_path, $base_name)
     // Terminate the script to prevent any additional output
     exit();
 }
+
+function parseCRJournal(string $webpage): array
+{
+    // Define the start and end markers
+    $start_marker = '<b>3.1 Įregistruoti juridiniai asmenys</b>';
+    $end_marker = '<h1>Document Outline</h1>';
+
+    // Step 1: Find the start and end positions
+    $start_pos = strpos($webpage, $start_marker);
+    $end_pos = strpos($webpage, $end_marker);
+
+    if ($start_pos === false || $end_pos === false) {
+        die("Couldn't find the specified section in the content.");
+    }
+
+    // Adjust the start position to the end of the start marker
+    $start_pos += strlen($start_marker);
+
+    // Step 2: Extract the content between the markers
+    $html = substr($webpage, $start_pos, $end_pos - $start_pos);
+
+    //var_dump($html);
+
+    // Split by blocks representing each company using the <hr/> tag
+    //$blocks = explode('- - -<br/>', $html);
+    $pattern = '/- - -<br\/>|<b>3\.2 Išregistruoti juridiniai asmenys<\/b><br\/>|<b>3\.3 Įregistruoti juridinių asmenų duomenų ar informacijos pakeitimai<\/b><br\/>/';
+
+    // Split the document based on the pattern
+    $blocks = preg_split($pattern, $html);
+    
+    $entities = [];
+
+    foreach ($blocks as $block) {
+        $entity = [];
+        $block = preg_replace('/^.*Išregistruoti juridiniai asmenys.*$/m', '', $block);
+        $block = preg_replace('/^.*juridinių asmenų duomenų ar informacijos pakeitimai.*$/m', '', $block);
+        // $block = preg_replace('/<br\/>\s*/', ' ', $block); // Remove br with \n
+        // $block = preg_replace('<br\/>', ' ', $block); // Remove br
+        $block = str_replace('&#160;', ' ', $block); // Convert HTML entity to space
+        $block = preg_replace('/\s+/', ' ', $block); // Replace multiple spaces with a single space
+        $block = str_replace(["\r\n", "\r", "\n"], "\n", $block);
+
+        // Extract the title (company name)
+        if (preg_match('/<b>(.*?)<\/b>/', $block, $matches)) {
+            $entity['ja_pavadinimas'] = str_replace('&#34;', '"', strip_tags($matches[1]));
+            //$entity['title'] = strip_tags($matches[1]);
+        }
+
+        // Extract the company code
+        if (preg_match('/kodas(?:\s)*<b>(\d+)<\/b>/', $block, $matches)) {
+            $entity['ja_kodas'] = (int) $matches[1];
+        }
+
+        // Extract the legal form
+        if (preg_match('/Teisinė(?:\s)*forma:\s*([^.]*)\./', $block, $matches)) {
+            $entity['forma'] = trim($matches[1]);
+            $entity['forma'] = str_replace('  ', ' ', $entity['forma']);
+        }
+
+        // Extract the legal status
+        if (preg_match('/Teisinis(?:\s)*statusas:\s*([^.]*)\./', $block, $matches)) {
+            $entity['statusas'] = trim($matches[1]);
+            $entity['statusas'] = str_replace('<br/>', '', $entity['statusas']);
+            $entity['statusas'] = str_replace('  ', ' ', $entity['statusas']);
+        }
+
+        // Extract the address
+        if (preg_match('/Buveinės(?:\s)*adresas:\s*([^<]*)/', $block, $matches)) {
+            $entity['adresas'] = trim($matches[1]);
+        }
+
+        // Extract the change date
+        if (preg_match('/\bPakeitimų(?:\s)*įregistravimo(?:\s)*data:(?:\s)*(\d{4}-\d{2}-\d{2})/u', $block, $matches)) {
+            $entity['pakeit_data'] = $matches[1];
+        }
+
+        // Extract the register date
+        if (preg_match('/\bĮregistravimo(?:\s)*data:(?:\s)*(\d{4}-\d{2}-\d{2})/u', $block, $matches)) {
+            $entity['ja_reg_data'] = $matches[1];
+        }
+
+        // Extract the unregister date
+        if (preg_match('/\bIšregistravimo(?:\s)*data:(?:\s)*(\d{4}-\d{2}-\d{2})/u', $block, $matches)) {
+            $entity['isreg_data'] = $matches[1];
+        }
+
+        // $entities[] = $entity;
+
+        // Only add entity if it has a title and code
+        if (!empty($entity['ja_pavadinimas']) && !empty($entity['ja_kodas']) && (isset($entity['ja_reg_data']) || isset($entity['pakeit_data']) || isset($entity['isreg_data']))) {
+            $entities[] = $entity;
+        }
+    }
+    return $entities;
+}
