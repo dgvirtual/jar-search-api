@@ -104,8 +104,8 @@ MAILTO=''
 55 0 * * * /usr/bin/php /var/www/projectdir/public/jar/data/scrapit.php update
 ## daily export of individual enterprises names to a new file (for others to import)
 56 0 * * * /usr/bin/php /var/www/projectdir/public/jar/data/scrapit.php export_individual
-## the RC journal is published at about 6:30 AM Vilnius time; scrap it before the work day starts
-30 7 * * * /usr/bin/php /var/www/projektai/public/jar/data/scrapjournal.php report sendemail
+## the RC journal is published at about 9:30 AM Vilnius time
+35 9 * * * /usr/bin/php /var/www/projektai/public/jar/data/scrapjournal.php report sendemail
 ```
 
 And here is the bash script to run the scrapping script example (`run_scrapping_script.sh`):
