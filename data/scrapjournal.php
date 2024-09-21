@@ -311,7 +311,7 @@ foreach ($entities as $entity) {
 
 
         // now enter into individual table
-        if (in_array((int) $revStatuses[$entity['statusas']], [810, 811, 812, 220])) {
+        if (in_array((int) $revForms[$entity['forma']], [810, 811, 812, 220])) {
 
             // Prepare the insert query
             if ($case === 'register') {
@@ -321,7 +321,7 @@ foreach ($entities as $entity) {
                 VALUES (:ja_kodas, :ja_pavadinimas, :tikr_statusas, :tikr_data)
                 ');
             } else {
-                $query = $db->prepare('UPDATE persons SET ja_pavadinimas = :ja_pavadinimas, tikr_statusas = :tikr_statusas, tikr_data = :tikr_data WHERE ja_kodas = :ja_kodas');
+                $query = $db->prepare('UPDATE individual SET ja_pavadinimas = :ja_pavadinimas, tikr_statusas = :tikr_statusas, tikr_data = :tikr_data WHERE ja_kodas = :ja_kodas');
             }
             $query->bindValue(':ja_kodas',
                 $entity['ja_kodas'],
@@ -337,8 +337,9 @@ foreach ($entities as $entity) {
                 'Success',
                 SQLITE3_TEXT
             );
+            //var_dump($entity);
             $query->bindValue(':tikr_data',
-                ($entity['ja_reg_data'] ?? $entity['pakeit_data']),
+                ($entity['ja_reg_data'] ?? ($entity['pakeit_data'] ?? $entity['isreg_data'])),
                 SQLITE3_INTEGER
             );
             // Execute the insert query
@@ -366,7 +367,7 @@ if ((isset($argv[1]) && in_array('report', $argv)) || isset($_GET['report'])) {
     $message .= "Įregistruota:" . count($registered) . "\r\n";
     $message .= "Išregistruota:" . count($unregistered) . "\r\n";
     $message .= "Atnaujinta:" . count($updated) . "\r\n";
-    $message .= "Individualių įmonių/komanditinių bendrovių: " . $individual . '(nepavyko: ' . $individual_fail . ")\r\n";
+    $message .= "Individualių įmonių/komanditinių bendrovių: " . $individual . ' (nepavyko: ' . $individual_fail . ")\r\n";
     $message .= "\n=======================\n\n";
 
     //var_dump($defective);
