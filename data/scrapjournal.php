@@ -340,7 +340,7 @@ foreach ($entities as $entity) {
             //var_dump($entity);
             $query->bindValue(':tikr_data',
                 ($entity['ja_reg_data'] ?? ($entity['pakeit_data'] ?? $entity['isreg_data'])),
-                SQLITE3_INTEGER
+                SQLITE3_TEXT
             );
             // Execute the insert query
             $result = $query->execute();
