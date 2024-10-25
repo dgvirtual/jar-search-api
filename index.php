@@ -36,6 +36,18 @@ if (!file_exists(DBFILE)) {
     <meta name="twitter:title" content="Juridinių asmenų paieška (patobulinta)">
     <meta name="twitter:description" content="Juridinių asmenų paieška pagal įvairius kriterijus, sukurta remiantis atvirais Juridinių asmenų registro duomenimis">
     <meta name="twitter:image" content="<?= BASE_URL ?>favicon.png">
+
+    <style>
+        .form-floating label {
+        color: grey; /* Default color for labels */
+        }
+
+        .form-floating input:focus ~ label,
+        .form-floating input:not(:placeholder-shown) ~ label {
+        color: grey; /* Color when input is focused or not empty */
+        }
+    </style>
+    
 </head>
 
 <body>
