@@ -280,12 +280,14 @@ if (!file_exists(DBFILE)) {
                                         <th>Teisinio statuso įgijimo data:</th>
                                         <td x-text="selectedPerson.stat_data_nuo"></td>
                                     </tr>
+                                    <?php /*
                                     <tr>
                                         <th>Duomenys paimti iš registro:</th>
                                         <td>
                                             <span x-text="selectedPerson.formavimo_data"></span><span x-show="selectedPerson.tikr_data">; individualios įmonės pavadinimo paėmimo iš registro data: <span x-text="selectedPerson.tikr_data"></span></span>
                                         </td>
                                     </tr>
+                                    */ ?>
                                     <tr>
                                         <th>Duomenys ir dokumentai Registre:</th>
                                         <td>
@@ -304,11 +306,13 @@ if (!file_exists(DBFILE)) {
                                         Papildomų patikrinimų atlikti nepavyko.
                                     </div>
                                 </div>
+                                <?php /*
                                 <div x-show="selectedPerson.pakeitimai_po_formavimo.length === 0">
                                     <div class="alert alert-success" role="alert">
                                         Po duomenų paėmimo iš Registro nebuvo užregistruota naujų dokumentų, susijusių su šiuo juridiniu asmeniu, taigi, duomenys yra aktualūs.
                                     </div>
                                 </div>
+                                */ ?>
                                 <div x-show="selectedPerson.pakeitimai_po_formavimo.length > 0">
                                     <div class="alert alert-warning" role="alert">
                                         Yra naujų, po duomenų paėmimo iš Registro sukurtų dokumentų, tad šie duomenys gali būti neaktualūs.
@@ -335,7 +339,7 @@ if (!file_exists(DBFILE)) {
                                     </table>
                                 </div>
 
-                                <p x-text="queries"></p>
+                                <p x-html="queries" style="font-size: 0.8em"></p>
                             </div>
                         </template>
                         <div x-show="!modalLoading && !selectedPerson">
@@ -392,7 +396,8 @@ if (!file_exists(DBFILE)) {
             <div class="row p-3">
 
                 <div class="col text-start">
-                    &copy; <?php if (date('Y') != '2024') echo '2024-'; echo date("Y"); ?> Donatas Glodenis, visos teisės saugomos
+                    &copy; <?php if (date('Y') != '2024') echo '2024-';
+                            echo date("Y"); ?> Donatas Glodenis, visos teisės saugomos
 
                 </div>
                 <div class="col text-end">

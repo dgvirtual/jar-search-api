@@ -142,15 +142,16 @@ function scrapHtml(int $id, $date = null)
         return ['success' => $success];
     }
 
+    $warning_text = '<span class="text-danger fw-bold">Statistine prasme mažai tikėtina, bet įmanoma, kad duomenys yra pasikeitę per pastarąsias 24 valandas</span>.';
     $targetDivRegex = '/<div\s+align="right">Šiandien Jūsų atliktų užklausų skaičius:\s*(\d+)<\/div>/';
     if (preg_match('/Jūs viršijote leistiną dienos limitą/', $html, $matches)) {
-        $remaining = 'Svetainės užklausų limitas RC sistemoje viršytas (200 užklausų).';
+        $remaining = 'Svetainės užklausų limitas RC sistemoje viršytas (200 užklausų). ' . $warning_text;
     } elseif (preg_match($targetDivRegex, $html, $matches)) {
         $number = intval($matches[1]);
         $remaining = 'Užklausų šiandien: ' . $number . '/200 (liko ' . 200 - $number . ')';
         $success = true;
     } else {
-        $remaining = 'Nepavyko gauti patikrinimo duomenų iš RC.';
+        $remaining = 'Nepavyko gauti patikrinimo duomenų iš RC. ' . $warning_text;
     }
 
     // 3. Find the table with string "Dokumentas / aprašymas" in the first th

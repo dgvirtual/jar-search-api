@@ -18,16 +18,15 @@
                             <p class="fw-bold">Pirminiai duomenys ir jų naudojimo sąlygos</p>
                             <p>Juridinių asmenų registro atviri duomenys, naudojami šioje svetainėje, yra prieinami pagal Creative Commons Attribution 4.0 licenciją (CC BY 4.0), leidžiančią laisvą naudojimą ir dalijimąsi su privalomu šaltinio nurodymu, licencijos nuoroda ir pažymėjimu apie pakeitimus.</p>
                             <p>Daugiau informacijos galite rasti <a target="_new" href="https://www.registrucentras.lt/p/1094">čia</a>.</p>
+                            <p>Duomenys yra kas rytą atnaujinami pagal Juridinių asmenų registro <a href="https://www.registrucentras.lt/jar/infleid/publications.do">Informacinių leidinių duomenis</a>. Taigi, galimas duomenų neatitikimas lyginant su aktualiais Juridinių asmenų registro duomenimis - mažiau nei viena para. Tais atvejais, kai bus galimybė, kad duomenys nebėra aktualūs, sistema šią informaciją nurodys juridinio asmens duomenų peržiūros lange. </p>
                             <p class="fw-bold">Svetainės ir jos duomenų naudojimo sąlygos</p>
-                            <p>Šioje svetainėje pateikiami Juridinių asmenų registro duomenys atnaujinami kartą per mėnesį, mėnesio pradžioje, taip pat kas rytą pagal Juridinių asmenų registro <a href="https://www.registrucentras.lt/jar/infleid/publications.do">Informacinių leidinių duomenis</a>, o atnaujinimo data nurodoma juridinio asmens detaliuose duomenyse. Svetainė papildomai teikia veikiančių individualių įmonių ir komanditinių ūkinių bendrijų pavadinimus, kurie atnaujinami rečiau nei kartą per mėnesį. Sistema rodo, kada paskutinį kartą buvo atnaujinti konkretūs pavadinimai. Šiuos duomenis galite <a href="<?= BASE_URL ?>data/scrapit.php?download=individual">atsisiųsti</a>.</p>
-                            <p>Svetainės duomenys gali būti naudojami tokiomis pačiomis sąlygomis kaip ir pirminiai registro duomenys. Be to, teikiama vieša API paslauga, kuri yra nemokama, tačiau jos veikimas nėra garantuotas. </p>
-                            <p>Šis projektas sukurtas mokymosi tikslais ir gali būti nutrauktas be išankstinio įspėjimo (nors kol kas nematau, kodėl tai turėčiau padaryti).</p>
+                            <p>Svetainė papildomai teikia veikiančių (nelikviduotų) individualių įmonių ir komanditinių ūkinių bendrijų pavadinimus, kurių nėra aukščiau nurodytuose Registrų centro pateikiamuose viešuosiuose duomenyse. Šiuos duomenis galite <a href="<?= BASE_URL ?>data/scrapit.php?download=individual">atsisiųsti</a>.</p>
+                            <p>Svetainės duomenys gali būti naudojami tokiomis pačiomis sąlygomis kaip ir pirminiai registro duomenys. Be to, teikiama vieša ir nemokama API paslauga. </p>
+                            <p>Šis projektas sukurtas mokymosi tikslais ir jo tęstinumas nėra užtikrintas (jei ketinate naudoti projekto duomenis savo aplikacijose, informuokite apie tai svetainės kūrėją).</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-
 </div>
