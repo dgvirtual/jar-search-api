@@ -148,7 +148,7 @@ function scrapHtml(int $id, $date = null)
         $remaining = 'Svetainės užklausų limitas RC sistemoje viršytas (200 užklausų). ' . $warning_text;
     } elseif (preg_match($targetDivRegex, $html, $matches)) {
         $number = intval($matches[1]);
-        $remaining = 'Užklausų šiandien: ' . $number . '/200 (liko ' . 200 - $number . ')';
+        $remaining = 'Patikrinimų RC viešoje paieškoje šiandien: ' . $number . '/200 (liko ' . 200 - $number . ')';
         $success = true;
     } else {
         $remaining = 'Nepavyko gauti patikrinimo duomenų iš RC. ' . $warning_text;
