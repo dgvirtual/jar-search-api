@@ -61,7 +61,7 @@ if (!file_exists(DBFILE)) {
             </div>
         </nav>
 
-        <p class="mt-3">Čia galima atlikti informatyvių paieškų, ir jūsų neerzins <em>Captcha</em> paveikslėliai. Norite sužinoti, <em>kiek įmonių įregistruota jūsų name</em>? Ar name, gatvėje, miestelyje <em>yra religinių bendruomenių</em>? Ar <em>Jūsų planuojamame įsigyti būste nėra įregistruotų įmonių</em>? Kiek mažųjų bendrijų yra jūsų miestelyje? O kiek - Lietuvoje? Visa tai galima sužinoti atlikę paiešką čia.</p>
+        <p class="mt-3">Čia galima atlikti informatyvių paieškų, ir jūsų neerzins <em>Captcha</em> paveikslėliai. Norite sužinoti, <em>kiek įmonių įregistruota jūsų name</em>? Ar name, gatvėje, miestelyje <em>yra religinių bendruomenių</em>? Ar <em>Jūsų planuojamame įsigyti būste nėra įregistruotų įmonių</em>? Kiek mažųjų bendrijų yra jūsų miestelyje? O kiek - Lietuvoje? Visa tai galite sužinoti atlikę paiešką čia.</p>
         <p><em>Programoje naudojami Juridinių asmenų registro atviri duomenys (<a href="#dataDocs">plačiau</a>).</em></p>
 
 
