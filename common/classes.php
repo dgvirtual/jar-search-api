@@ -336,11 +336,12 @@ class mySQlite3 extends SQLite3
     public function getOldestIndividualEntry()
     {
         // where lists the codes of legal forms to search
-        $sql = "SELECT persons.ja_kodas, individual.tikr_data FROM persons
-        LEFT JOIN individual ON persons.ja_kodas = individual.ja_kodas
-        WHERE (persons.form_kodas = 810 OR persons.form_kodas = 811 OR persons.form_kodas = 812 OR persons.form_kodas = 220) AND persons.stat_kodas != 10
-        ORDER BY tikr_data ASC 
-        LIMIT 1";
+        $sql = "SELECT persons.ja_kodas, individual.tikr_data   FROM persons
+            LEFT JOIN individual ON persons.ja_kodas = individual.ja_kodas
+            WHERE persons.form_kodas IN (" . CODES_WITH_HIDDEN_NAMES . ") AND persons.stat_kodas != " . DISREG_STATUS_CODE . "
+            ORDER BY tikr_data ASC 
+            LIMIT 1
+        ";
         $stmt = $this->prepare($sql);
         $result = $stmt->execute();
 
@@ -438,21 +439,15 @@ class mySQlite3 extends SQLite3
 
         // Get the number of records still undone
         $stmt2 = $this->prepare('
-        SELECT COUNT(*) as count 
-        FROM persons 
-        LEFT JOIN individual ON individual.ja_kodas = persons.ja_kodas
-        WHERE (form_kodas = :code1 OR form_kodas = :code11 OR form_kodas = :code12 OR form_kodas = :code2) AND stat_kodas != :code3 AND individual.tikr_data IS NULL
+            SELECT COUNT(*) as count 
+            FROM persons 
+            LEFT JOIN individual ON individual.ja_kodas = persons.ja_kodas
+            WHERE form_kodas IN (' . implode(', ', array_map(fn($code) => ":code{$code}", explode(', ', CODES_WITH_HIDDEN_NAMES))) . ') AND stat_kodas != :disreg AND individual.tikr_data IS NULL
         ');
-        $ind_kodas = 810;
-        $ind_kodas2 = 811;
-        $ind_kodas3 = 812;
-        $kom_kodas = 220;
-        $stmt2->bindValue(':code1', $ind_kodas, SQLITE3_INTEGER);
-        $stmt2->bindValue(':code11', $ind_kodas2, SQLITE3_INTEGER);
-        $stmt2->bindValue(':code12', $ind_kodas3, SQLITE3_INTEGER);
-        $stmt2->bindValue(':code2', $kom_kodas, SQLITE3_INTEGER);
-        $stat_kodas = 10;
-        $stmt2->bindValue(':code3', $stat_kodas, SQLITE3_INTEGER);
+        foreach (explode(', ', CODES_WITH_HIDDEN_NAMES) as $index => $code) {
+            $stmt2->bindValue(":code{$index}", (int)$code, SQLITE3_INTEGER);
+        }
+        $stmt2->bindValue(':disreg', DISREG_STATUS_CODE, SQLITE3_INTEGER);
         $result2 = $stmt2->execute();
         $row = $result2->fetchArray(SQLITE3_ASSOC);
         $targetRecords = $row['count'];

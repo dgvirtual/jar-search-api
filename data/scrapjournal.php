@@ -311,7 +311,7 @@ foreach ($entities as $entity) {
 
 
         // now enter into individual table
-        if (in_array((int) $revForms[$entity['forma']], [810, 811, 812, 220])) {
+        if (in_array((int) $revForms[$entity['forma']], [CODES_WITH_HIDDEN_NAMES])) {
 
             // Prepare the insert query
             if ($case === 'register') {
@@ -367,7 +367,7 @@ if ((isset($argv[1]) && in_array('report', $argv)) || isset($_GET['report'])) {
     $message .= "Įregistruota:" . count($registered) . "\r\n";
     $message .= "Išregistruota:" . count($unregistered) . "\r\n";
     $message .= "Atnaujinta:" . count($updated) . "\r\n";
-    $message .= "Individualių įmonių/komanditinių bendrovių: " . $individual . ' (nepavyko: ' . $individual_fail . ")\r\n";
+    $message .= "Individualių įmonių/komanditinių/tikrųjų ūkinių bendrovių: " . $individual . ' (nepavyko: ' . $individual_fail . ")\r\n";
     $message .= "\n=======================\n\n";
 
     //var_dump($defective);

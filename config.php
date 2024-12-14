@@ -105,6 +105,16 @@ if (!defined("DBFILE"))
     define('DBFILE', 'writable/jar.db');
 
 /**
+ * List of often used codes
+ */
+// damn English... individualios įmonės, komanditinės ūkinės bendrijos ir tikrosios ūkinės bendrijos, jų filialai
+if (!defined("CODES_WITH_HIDDEN_NAMES"))
+    define('CODES_WITH_HIDDEN_NAMES', '210, 211, 212, 220, 221, 222, 810, 811, 812');
+// išregistruotų statuso numeris
+if (!defined("DISREG_STATUS_CODE"))
+    define('DISREG_STATUS_CODE', '10');
+
+/**
  * Default timestamp to use in the db.
  */
 // TODO: rewrite in code to use TIMEFORMAT instead of TIMESTAMP
