@@ -64,10 +64,16 @@ if (isset($argv[1]) && in_array('update', $argv)) {
         $message .= 'Vykdomas veiksmas – pilnas individualių įmonių ir komanditinių ūkinių bendrijų pavadinimų atnaujinimas neatsižvelgiant į status quo...' . "\n";
         $total = true;
     }
-
+    // purge entries that no longer belong in individual after legal form change
+    if ($total) {
+        $noPurged = $db->purgeChangedLegalFormsFromIndividual();
+    }
     $noUpdated = $db->updatePersonsFromIndividual($total);
     $db->updateSetting('individual_last_update', date('Y-m-d'), 'string');
-
+    
+    if (isset($noPurged)) {
+        $message .= "Pašalinta pavadinimų iš individualių įmonių ir komanditinių ūkinių bendrijų sąrašo pasikeitus teisinei formai: " . $noPurged . "\n";
+    }
     $message .= "Viso veikiančių individualių įmonių / komanditinių ūkinių bendrijų nesutvarkytais pavadinimais: " . $stats['targetRecords'] . "\n";
     $message .= "Gauta pavadinimų iš viso: " . $stats['totalRecords'] . "\n";
     $message .= "Šiandien atnaujinta pavadinimų: " . $noUpdated . "\n\n=======================\n\n";

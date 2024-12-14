@@ -157,5 +157,33 @@ The code is made available under MIT licence. See file [LICENCE.md](LICENCE.md) 
 
 The open data, which the app imports, is distributed under the [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/deed.lt). More info is available here: https://www.registrucentras.lt/atviri_duomenys/
 
+## Random notes
 
+To fix database if index errors are reported, you can recreate all the indexes this way: 
+
+```sql
+BEGIN TRANSACTION;
+
+DROP INDEX idx_stat_pavadinimas;
+DROP INDEX idx_stat_kodas;
+DROP INDEX idx_ja_pavadinimas;
+DROP INDEX idx_ja_kodas;
+DROP INDEX idx_form_tipas;
+DROP INDEX idx_form_pavadinimas;
+DROP INDEX idx_form_pav_ilgas;
+DROP INDEX idx_form_kodas;
+DROP INDEX idx_adresas;
+
+CREATE INDEX idx_stat_pavadinimas ON statuses(stat_pavadinimas COLLATE utf8_lithuanian_ci);
+CREATE INDEX idx_stat_kodas ON statuses(stat_kodas);
+CREATE INDEX idx_ja_pavadinimas ON persons(ja_pavadinimas COLLATE utf8_lithuanian_ci);
+CREATE INDEX idx_ja_kodas ON persons(ja_kodas);
+CREATE INDEX idx_form_tipas ON forms(tipas);
+CREATE INDEX idx_form_pavadinimas ON forms(form_pavadinimas COLLATE utf8_lithuanian_ci);
+CREATE INDEX idx_form_pav_ilgas ON forms(form_pav_ilgas COLLATE utf8_lithuanian_ci);
+CREATE INDEX idx_form_kodas ON forms(form_kodas);
+CREATE INDEX idx_adresas ON persons(adresas COLLATE utf8_lithuanian_ci);
+
+COMMIT;
+```
 

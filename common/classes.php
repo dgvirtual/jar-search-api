@@ -357,15 +357,73 @@ class mySQlite3 extends SQLite3
         return $row ?? null;
     }
 
+    // for tests mainly
+    public function listEntriesToDelete() {
+        $sql = "SELECT individual.ja_kodas, individual.ja_pavadinimas 
+                    FROM individual 
+                    JOIN persons ON persons.ja_kodas = individual.ja_kodas 
+                    WHERE persons.form_kodas NOT IN ( " . CODES_WITH_HIDDEN_NAMES . ")";
+        $result = $this->query($sql);
+        if (!$result) {
+            echo "Error retrieving entries to delete: " . $this->lastErrorMsg();  // Consider logging instead of echoing
+            return [];
+        }
+        // Fetch all rows as an array of associative arrays
+        $entries = [];
+        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            $entries[] = $row;
+        }
+        var_dump($entries);
+    }
+
+    // used only once to get the list of codes to update
+    public function getArrayOfCodesToDeleteFromIndividual()
+    {
+        $sql = "SELECT individual.ja_kodas, individual.ja_pavadinimas 
+                    FROM individual 
+                    JOIN persons ON persons.ja_kodas = individual.ja_kodas 
+                    WHERE persons.form_kodas NOT IN (" . CODES_WITH_HIDDEN_NAMES . ")";
+        $result = $this->query($sql);
+        if (!$result) {
+            echo "Error retrieving entries to delete: " . $this->lastErrorMsg();  // Consider logging instead of echoing
+            return [];
+        }
+        // Fetch all rows as an array of codes
+        $codes = [];
+        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            $codes[] = $row;
+        }
+        return $codes;
+    }
+
+    // for tests mainly
+    public function purgeChangedLegalFormsFromIndividual(): int
+    {
+        $sql = "DELETE FROM individual 
+            WHERE ja_kodas IN (
+                SELECT individual.ja_kodas 
+                FROM individual 
+                JOIN persons ON persons.ja_kodas = individual.ja_kodas 
+                WHERE persons.form_kodas NOT IN (" . CODES_WITH_HIDDEN_NAMES . ")
+            )";
+        $result = $this->exec($sql);
+
+        if ($result) {
+            $deletedRows = $this->changes();
+        } else {
+            throw new Exception("Error executing SQL statement: " . $this->lastErrorMsg());
+        }
+
+        return $deletedRows ?? null;   
+    }
+
     public function updatePersonsFromIndividual($total = false): int
     {
-        // Get yesterday's date in YYYY-MM-DD format
-        $yesterday = date('Y-m-d', strtotime('-1 day'));
-
         // Prepare and execute query to fetch relevant entries from individual table
         if ($total) {
             $stmt = $this->prepare('SELECT ja_kodas, ja_pavadinimas FROM individual WHERE tikr_statusas = "Success"');
         } else {
+            $yesterday = date('Y-m-d', strtotime('-1 day'));
             $stmt = $this->prepare('SELECT ja_kodas, ja_pavadinimas FROM individual WHERE tikr_data = :yesterday AND tikr_statusas = "Success"');
             $stmt->bindValue(':yesterday', $yesterday, SQLITE3_TEXT);
         }
