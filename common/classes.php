@@ -3,16 +3,14 @@
 
 class mySQlite3 extends SQLite3
 {
+    private float $initTime;
     public bool $sqliteIcuExtInstalled = false;
     public bool $sqliteIcuExtEnabled = false;
 
     public function __construct(string $filename)
     {
         parent::__construct($filename);
-
-        // try to load ICU extension, if not available, use (slower) PHP functions
-        // for compatibility with mysql, call collation utf8_lithuanian_ci
-        // @ suppresses error (method returns false)
+        $this->initTime = microtime(true); // Store the time of class initiation
 
         $this->sqliteIcuExtEnabled = !empty(SQLITE_ICU_EXT);
         $this->sqliteIcuExtInstalled = @$this->loadExtension(SQLITE_ICU_EXT);
@@ -46,6 +44,12 @@ class mySQlite3 extends SQLite3
         // set timeout for database operations
         $this->exec('PRAGMA busy_timeout = 2000;');
     }
+
+    public function getExecutionTime(): float
+    {
+        return round(microtime(true) - $this->initTime, 2);
+    }
+
     /**
      * database helper functions
      */

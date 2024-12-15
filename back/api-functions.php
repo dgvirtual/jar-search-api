@@ -7,7 +7,8 @@ function respond(
     array $data = [],
     ?string $queriesInfoString = null,
     ?array $recordCount = null,
-    bool $cache = false
+    bool $cache = false,
+    float|string $executionTime = 'Not measured'
 ) {
 
     // Allow CORS for any domain
@@ -38,11 +39,11 @@ function respond(
     }
 
     http_response_code($status_code);
-    $execution_time = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
     $response = [
         'status_code' => $status_code,
         'status_message' => $status_message,
-        'execution_time' => round($execution_time, 4),
+        'execution_time' => $executionTime,
+        'count' => [],
         'data' => $data
     ];
     if ($queriesInfoString) {
@@ -51,6 +52,8 @@ function respond(
 
     if ($recordCount) {
         $response['count'] = $recordCount;
+    } else {
+        unset($response['count']);
     }
 
     echo json_encode($response);

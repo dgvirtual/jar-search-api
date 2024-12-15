@@ -39,7 +39,7 @@ if (isset($_GET['extra']) && ($_GET['extra'] === 'statuses' || $_GET['extra'] ==
         $data[] = $row;
     }
 
-    respond(200, 'Duomenys sėkmingai gauti: ' . $_GET['extra'], $data, null, null, true);
+    respond(200, 'Duomenys sėkmingai gauti: ' . $_GET['extra'], $data, null, null, true, $db->getExecutionTime());
 }
 
 if (
@@ -241,11 +241,13 @@ if (
                 'total' =>  (int) $totalCount,
                 'page' => (int) ($_GET['page'] ?? 1),
                 'limit' => (int) $limitValue,
-            ]
+            ],
+            true, // true for production
+            $db->getExecutionTime()
         );
     } else {
-        respond(404, 'Duomenų pagal užklausą rasti nepavyko. Patikrinkite, ar teisingai įvedėte paieškos tekstą ir kitus parametrus. ');
+        respond(200,'Duomenų pagal užklausą rasti nepavyko. Patikrinkite, ar teisingai įvedėte paieškos tekstą ir kitus parametrus. ', [], null, null, false, $db->getExecutionTime());
     }
 } else {
-    respond(400, 'Blogai suformuota užklausa');
+    respond(400, 'Blogai suformuota užklausa', [], null, null, $db->getExecutionTime());
 }
