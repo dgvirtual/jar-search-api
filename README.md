@@ -149,35 +149,16 @@ Enabling the SQLite3 PCRE extension allows the use of advanced regular expressio
 
 To enable this feature, follow these steps for a Unix system (Ubuntu example):
 
-    ```bash
-    # install the package
-    sudo apt-get install qlite3-pcre
-    # link the plugin to the place where it is accessible to php sqlite plugin
-    sudo ln /usr/lib/sqlite3/pcre.so /usr/lib/sqlite3/ext
-    # make it readable by the web server
-    sudo chmod 755 pcre.so
-    ```
+```bash
+# install the package
+sudo apt-get install qlite3-pcre
+# link the plugin to the place where it is accessible to php sqlite plugin
+sudo ln /usr/lib/sqlite3/pcre.so /usr/lib/sqlite3/ext
+# make it readable by the web server
+sudo chmod 755 pcre.so
+```
 
 The PCRE extension name should be put into the constant `SQLITE_PCRE_EXT` in `.env` file.
-
-2. **Set the corresponding flag to true in your configuration:**
-
-    In your `.env` file, add or update the following line:
-
-    ```env
-    SQLITE_PCRE_EXT=true
-    ```
-
-3. **Specify the PCRE extension file name:**
-
-    The PCRE extension file name is usually `pcre.so` on Unix systems. Ensure this is correctly set in your configuration.
-
-    ```env
-    SQLITE_PCRE_EXT_FILE=pcre.so
-    ```
-
-By enabling this feature, you can make extended regular expression functionality available to SQLite.
-
 
 ## Contributing
 
