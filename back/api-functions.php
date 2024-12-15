@@ -178,7 +178,11 @@ function scrapHtml(int $id, $date = null)
         $dom->loadHTML('<?xml encoding="UTF-8">' . $targetTableHTML, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         $rows = $dom->getElementsByTagName('tr');
         foreach ($rows as $row) {
-            $cols = $row->getElementsByTagName('td');
+            if ($row instanceof DOMElement) {
+                $cols = $row->getElementsByTagName('td');
+            } else {
+                continue;
+            }
             if ($cols->length >= 4) {
                 $docDate = trim($cols->item(3)->textContent);
                 if (strtotime($docDate) > strtotime($dateThreshold)) {
