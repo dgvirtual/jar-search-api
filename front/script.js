@@ -71,7 +71,7 @@ function legalPersonApp() {
         },
 
         showToast(toastContent, toastMode = 'warning') {
-            console.log('running showToast');
+            //console.log('running showToast');
             this.toastContent = toastContent;
             this.toastMode = toastMode;
             this.toastVisible = true;

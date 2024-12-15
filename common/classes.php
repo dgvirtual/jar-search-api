@@ -4,6 +4,8 @@
 class mySQlite3 extends SQLite3
 {
     private float $initTime;
+    public bool $sqlitePcreExtInstalled = false;
+    public bool $sqlitePcreExtEnabled = false;
     public bool $sqliteIcuExtInstalled = false;
     public bool $sqliteIcuExtEnabled = false;
 
@@ -11,10 +13,13 @@ class mySQlite3 extends SQLite3
     {
         parent::__construct($filename);
         $this->initTime = microtime(true); // Store the time of class initiation
+        // seems to have no effect either with or without icu/pcre
+        //$this->exec("PRAGMA case_sensitive_like = false;");
 
         $this->sqliteIcuExtEnabled = !empty(SQLITE_ICU_EXT);
+        // @ suppresses error (instead method returns false)
         $this->sqliteIcuExtInstalled = @$this->loadExtension(SQLITE_ICU_EXT);
-
+        // try to load ICU extension; for compatibility with mysql, call the collation utf8_lithuanian_ci
         if ($this->sqliteIcuExtEnabled && $this->sqliteIcuExtInstalled) {
             $this->exec("SELECT icu_load_collation('lt', 'utf8_lithuanian_ci')");
         } else {
@@ -22,12 +27,22 @@ class mySQlite3 extends SQLite3
                 return strcoll($a, $b);
             });
 
-            // normalization function, replacing default lower
-            $this->createFunction('LOWER', function ($str) {
-                return mb_strtolower($str);
-            });
+            // Custom normalization function suggested by Copilot, seems to have no effect
+            // $this->createFunction('NORMALIZE', function ($str) {
+            //     return Normalizer::normalize($str, Normalizer::FORM_C);
+            // }, 1);
 
-            // my own like function
+            // Custom case folding function suggested by copilot fixes search results Ukmergė (in title)
+            // - apparently where ė meets " in the database column
+            $this->createFunction('LOWER', function ($str) {
+                return mb_strtolower($str, 'UTF-8');
+            }, 1);
+        }
+
+        $this->sqlitePcreExtEnabled = !empty(SQLITE_PCRE_EXT);
+        $this->sqlitePcreExtInstalled = @$this->loadExtension(SQLITE_PCRE_EXT);
+
+        if (! $this->sqlitePcreExtEnabled || ! $this->sqlitePcreExtInstalled) {
             $this->createFunction('REGEXP', function ($pattern, $str) {
                 // Remove trailing dots from the pattern and escape special characters
                 $pattern = rtrim($pattern, '.,;');
@@ -369,7 +384,8 @@ class mySQlite3 extends SQLite3
     }
 
     // for tests mainly
-    public function listEntriesToDelete() {
+    public function listEntriesToDelete()
+    {
         $sql = "SELECT individual.ja_kodas, individual.ja_pavadinimas 
                     FROM individual 
                     JOIN persons ON persons.ja_kodas = individual.ja_kodas 
@@ -425,7 +441,7 @@ class mySQlite3 extends SQLite3
             throw new Exception("Error executing SQL statement: " . $this->lastErrorMsg());
         }
 
-        return $deletedRows ?? null;   
+        return $deletedRows ?? null;
     }
 
     public function updatePersonsFromIndividual($total = false): int

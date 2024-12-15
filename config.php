@@ -53,6 +53,12 @@ if (!defined("SQLITE_ICU_EXT"))
     define('SQLITE_ICU_EXT', '');
 
 /**
+ * SQLite3 PCRE extension binary path, if it is available
+ */
+if (!defined("SQLITE_PCRE_EXT"))
+    define('SQLITE_PCRE_EXT', '');
+
+/**
  * Define here all proxies that you will use to scrape data from the website of the center of registers.
  * You have one on this project itself by default
  */

@@ -30,11 +30,15 @@ OPEN_DATA_INDIVIDUAL_URL='https://pr.lapas.info/jar/data/scrapit.php?download=in
 # Database file, relative to the project root
 DBFILE='writable/database.db'
 
-# SQLite3 ICU extension file name (usually libSqliteIcu.so on Unix systems)
-# if enabled, makes queries faster than custom PHP functions
-# see tutorial at https://dg.lapas.info/irasas/enhancing-sqlite3-with-icu-extension/ 
-# You can try using the two binaries distributed with this app (files libSqliteIcu_*.so)
-SQLITE_ICU_EXT=''
+# SQLite3 PCRE extension file name (usually pcre.so on Unix systems)
+# When enabled, it allows the use of advanced regular expression features in SQLite queries.
+# To enable this feature, set the corresponding flag to true.
+# if enabled, makes extended regexp functionality available to sqlite
+# To install it on a unix (Ubuntu in my case) system the process is this: 
+# `sudo apt install sqlite3-pcre`
+# `sudo ln /usr/lib/sqlite3/pcre.so /usr/lib/sqlite3/ext`
+# `sudo chmod 755 /usr/lib/sqlite3/ext/pcre.so`
+SQLITE_PCRE_EXT=''
 
 ######################################################
 #### LOOKUP OTHER POSSIBLE ENTRIES ####### ###########
