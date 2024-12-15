@@ -23,6 +23,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     respond(405, 'Tokio metodo nėra');
 }
 
+if (isset($_GET['extra']) && $_GET['extra'] === 'icu') {
+    $message = 'Duomenys sėkmingai gauti';
+    $data['icuStatus'] = 'SQlite3 ICU plėtinys: ' . ($db->sqliteIcuExtInstalled ? 'įdiegtas' : 'neįdiegtas') 
+        . '/' . ($db->sqliteIcuExtEnabled ? 'įjungtas' : 'neįjungtas');
+    respond(200, $message, $data);
+}
+
 if (isset($_GET['extra']) && ($_GET['extra'] === 'statuses' || $_GET['extra'] === 'forms')) {
 
     $results = $db->query("SELECT * FROM " . $_GET['extra'] . " ORDER BY " . substr($_GET['extra'], 0, 4)  . "_pavadinimas ASC");

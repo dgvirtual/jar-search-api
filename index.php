@@ -408,8 +408,7 @@ if (!file_exists(DBFILE)) {
             <div class="row p-3">
 
                 <div class="col text-start">
-                    &copy; <?php if (date('Y') != '2024') echo '2024-';
-                            echo date("Y"); ?> Donatas Glodenis, visos teisės saugomos
+                    <button type="button" class="btn p-0 m-0 align-baseline border-0" x-ref="icuButton" @click="fetchICUInfo()">&copy;</button> <?php if (date('Y') != '2024') echo '2024-'; echo date("Y"); ?> Donatas Glodenis, visos teisės saugomos <br><span class="small" id='icuExtensionInUse'></span>
 
                 </div>
                 <div class="col text-end">

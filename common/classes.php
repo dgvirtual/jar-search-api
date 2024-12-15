@@ -3,6 +3,9 @@
 
 class mySQlite3 extends SQLite3
 {
+    public bool $sqliteIcuExtInstalled = false;
+    public bool $sqliteIcuExtEnabled = false;
+
     public function __construct(string $filename)
     {
         parent::__construct($filename);
@@ -10,7 +13,11 @@ class mySQlite3 extends SQLite3
         // try to load ICU extension, if not available, use (slower) PHP functions
         // for compatibility with mysql, call collation utf8_lithuanian_ci
         // @ suppresses error (method returns false)
-        if (!empty(SQLITE_ICU_EXT) && @$this->loadExtension(SQLITE_ICU_EXT)) {
+
+        $this->sqliteIcuExtEnabled = !empty(SQLITE_ICU_EXT);
+        $this->sqliteIcuExtInstalled = @$this->loadExtension(SQLITE_ICU_EXT);
+
+        if ($this->sqliteIcuExtEnabled && $this->sqliteIcuExtInstalled) {
             $this->exec("SELECT icu_load_collation('lt', 'utf8_lithuanian_ci')");
         } else {
             $this->createCollation('utf8_lithuanian_ci', function ($a, $b) {

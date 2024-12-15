@@ -20,6 +20,15 @@ function clearUrlParams() {
     window.history.replaceState({}, document.title, url);
 };
 
+function fetchICUInfo() {
+    fetch('<?= BASE_URL ?>api.php?extra=icu')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('icuExtensionInUse').innerText = data.data.icuStatus;
+        })
+        .catch(error => console.error('Error fetching ICU info:', error));
+}
+
 function legalPersonApp() {
     return {
         legalPersonIds: '',
