@@ -25,8 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 
 if (isset($_GET['extra']) && $_GET['extra'] === 'icu') {
     $message = 'Duomenys sėkmingai gauti';
-    $data['icuStatus'] = 'SQlite3 ICU plėtinys: ' . ($db->sqliteIcuExtInstalled ? 'įdiegtas' : 'neįdiegtas') 
-        . '/' . ($db->sqliteIcuExtEnabled ? 'įjungtas' : 'neįjungtas');
+    $data['icuStatus'] = 'SQlite3 ICU: ' . ($db->sqliteIcuExtInstalled ? 'įdiegtas' : 'neįdiegtas') 
+        . '/' . ($db->sqliteIcuExtEnabled ? 'įjungtas' : 'neįjungtas')
+        . '; SQlite3 PCRE: ' . ($db->sqlitePcreExtInstalled ? 'įdiegtas' : 'neįdiegtas')
+        . '/' . ($db->sqlitePcreExtEnabled ? 'įjungtas' : 'neįjungtas');
     respond(200, $message, $data);
 }
 
