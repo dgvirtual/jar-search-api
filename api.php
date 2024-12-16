@@ -248,7 +248,7 @@ if (
             $db->getExecutionTime()
         );
     } else {
-        respond(200,'Duomenų pagal užklausą rasti nepavyko. Patikrinkite, ar teisingai įvedėte paieškos tekstą ir kitus parametrus. ', [], null, null, false, $db->getExecutionTime());
+        respond(404,'Duomenų pagal užklausą rasti nepavyko. Patikrinkite, ar teisingai įvedėte paieškos tekstą ir kitus parametrus. ', [], null, null, false, $db->getExecutionTime());
     }
 } else {
     respond(400, 'Blogai suformuota užklausa', [], null, null, $db->getExecutionTime());
