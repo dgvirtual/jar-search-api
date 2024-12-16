@@ -163,11 +163,11 @@ if (!file_exists(DBFILE)) {
                     </li>
                     <!-- 5 pages back button -->
                     <li class="page-item" x-show="count.total > (count.limit * 5)" :class="{ disabled: page <= 5 }">
-                        <a title="1 atgal" class="page-link" href="#" @click.prevent="changePage(page - 5)"><i class="bi bi-chevron-double-left"></i></a>
+                        <a title="5 atgal" class="page-link" href="#" @click.prevent="changePage(page - 5)"><i class="bi bi-chevron-double-left"></i></a>
                     </li>
                     <!-- Previous page button -->
                     <li class="page-item" :class="{ disabled: page === 1 }">
-                        <a title="5 atgal" class="page-link" href="#" @click.prevent="changePage(page - 1)"><i class="bi bi-chevron-left"></i></a>
+                        <a title="1 atgal" class="page-link" href="#" @click.prevent="changePage(page - 1)"><i class="bi bi-chevron-left"></i></a>
                     </li>
                     <!-- Current page indicator -->
                     <li class="page-item current">
@@ -177,11 +177,11 @@ if (!file_exists(DBFILE)) {
                     </li>
                     <!-- Next page button -->
                     <li class="page-item" :class="{ disabled: page === Math.ceil(count.total / limit) }">
-                        <a title="1 į priekį" class="page-link" href="#" @click.prevent="changePage(page + 1)"><i class="bi bi-chevron-right"></i></a>
+                        <a title="5 į priekį" class="page-link" href="#" @click.prevent="changePage(page + 1)"><i class="bi bi-chevron-right"></i></a>
                     </li>
                     <!-- 5 pages forward button -->
                     <li class="page-item" x-show="count.total > (count.limit * 5)" :class="{ disabled: page + 5 >= Math.ceil(count.total / limit) }">
-                        <a title="5 į priekį" class="page-link" href="#" @click.prevent="changePage(page + 5)"><i class="bi bi-chevron-double-right"></i></a>
+                        <a title="1 į priekį" class="page-link" href="#" @click.prevent="changePage(page + 5)"><i class="bi bi-chevron-double-right"></i></a>
                     </li>
                     <!-- Last page button -->
                     <li class="page-item" :class="{ disabled: page === Math.ceil(count.total / limit) }">
