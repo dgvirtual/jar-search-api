@@ -108,6 +108,26 @@ class mySQlite3 extends SQLite3
         }
     }
 
+    public function checkAndReindex(): bool
+    {
+
+        $result = $this->query('PRAGMA integrity_check;');
+        $integrity_check = $result->fetchArray(SQLITE3_ASSOC);
+
+        if ($integrity_check['integrity_check'] !== 'ok') {
+            $this->exec('REINDEX;');
+            usleep(200000); // sleep for 0.2 seconds
+            $result = $this->query('PRAGMA integrity_check;');
+            $integrity_check = $result->fetchArray(SQLITE3_ASSOC);
+            if ($integrity_check['integrity_check'] !== 'ok') {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+
     public function tableExists(string $table_name): bool
     {
         // Define the SQL statement to check the table existence

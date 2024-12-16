@@ -55,6 +55,8 @@ $benchmark = new Benchmark();
 $benchmark->start();
 
 $db = new mySQLite3(BASE_DIR . DBFILE);
+
+$db->checkAndReindex();
 //enable concurrent reads while write is in progress
 $db->exec('PRAGMA journal_mode = WAL;');
 
