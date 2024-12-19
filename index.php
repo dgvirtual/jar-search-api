@@ -39,15 +39,30 @@ if (!file_exists(DBFILE)) {
 
     <style>
         .form-floating label {
-        color: grey; /* Default color for labels */
+            color: grey;
+            /* Default color for labels */
         }
 
-        .form-floating input:focus ~ label,
-        .form-floating input:not(:placeholder-shown) ~ label {
-        color: grey; /* Color when input is focused or not empty */
+        .form-floating input:focus~label,
+        .form-floating input:not(:placeholder-shown)~label {
+            color: grey;
+            /* Color when input is focused or not empty */
+        }
+
+        .spinner-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
         }
     </style>
-    
+
 </head>
 
 <body>
@@ -191,7 +206,7 @@ if (!file_exists(DBFILE)) {
             </nav>
 
             <!-- Loading Spinner -->
-            <div class="text-center my-3" x-show="isLoading">
+            <div class="spinner-overlay" x-show="isLoading">
                 <div class="spinner-border" role="status">
                     <span class="visually-hidden">Įkeliama...</span>
                 </div>
@@ -408,7 +423,8 @@ if (!file_exists(DBFILE)) {
             <div class="row p-3">
 
                 <div class="col text-start">
-                    <button type="button" class="btn p-0 m-0 align-baseline border-0" x-ref="icuButton" @click="fetchICUInfo()">&copy;</button> <?php if (date('Y') != '2024') echo '2024-'; echo date("Y"); ?> Donatas Glodenis, visos teisės saugomos <br><span class="small" id='icuExtensionInUse'></span>
+                    <button type="button" class="btn p-0 m-0 align-baseline border-0" x-ref="icuButton" @click="fetchICUInfo()">&copy;</button> <?php if (date('Y') != '2024') echo '2024-';
+                                                                                                                                                echo date("Y"); ?> Donatas Glodenis, visos teisės saugomos <br><span class="small" id='icuExtensionInUse'></span>
 
                 </div>
                 <div class="col text-end">

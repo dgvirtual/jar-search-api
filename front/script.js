@@ -48,6 +48,7 @@ function legalPersonApp() {
         isLoading: false,
         modalLoading: false,
         selectedPerson: null,
+        cache: new Map(),
         clearUnregDates() {
             if (!this.showLiquidated) {
                 this.unregFrom = this.unregTo = '';
@@ -91,6 +92,12 @@ function legalPersonApp() {
             toast.hide();
         },
 
+        handleLegalPersonsResponse(data) {
+            this.legalPersons = data.data;
+            this.count = data.count;
+            //this.showToast(data.status_message);
+        },
+
         fetchLegalPersons() {
             this.legalPersons = [];
             let ids = this.legalPersonIds
@@ -119,14 +126,31 @@ function legalPersonApp() {
                 );
                 return;
             }
+            
+            const url =`<?= BASE_URL ?><?= API_FILE ?>?ids=${ids.join(',')}&title=${title}&addr=${addr}&status=${status}&form=${form}&reg_from=${this.regFrom}&reg_to=${this.regTo}&unreg_from=${this.unregFrom}&unreg_to=${this.unregTo}&show_l=${show_l}&limit=${limit}&page=${page}`;
+            if (this.cache.has(url)) {
+                const cachedData = this.cache.get(url);
+                this.handleLegalPersonsResponse(cachedData);
+                this.isLoading = false; // Reset isLoading to false
+                return;
+            }
+
             this.isLoading = true;
-            fetch(`<?= BASE_URL ?><?= API_FILE ?>?ids=${ids.join(',')}&title=${title}&addr=${addr}&status=${status}&form=${form}&reg_from=${this.regFrom}&reg_to=${this.regTo}&unreg_from=${this.unregFrom}&unreg_to=${this.unregTo}&show_l=${show_l}&limit=${limit}&page=${page}`)
+
+            // Set a timeout to hide the overlay after 5 seconds
+            this.timeoutId = setTimeout(() => {
+                this.isLoading = false;
+                this.showToast('Užklausa trunka per ilgai. Galite bandyti iš naujo.', 'danger');
+            }, 7000);
+
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
+                    clearTimeout(this.timeoutId);
                     this.isLoading = false;
                     if (data.status_code === 200) {
-                        this.legalPersons = data.data;
-                        this.count = data.count;
+                        this.cache.set(url, data); // Store the data in the cache
+                        this.handleLegalPersonsResponse(data);
                     } else {
                         this.legalPersons = [];
                         this.count = {};
@@ -134,10 +158,11 @@ function legalPersonApp() {
                     }
                 })
                 .catch(error => {
+                    clearTimeout(this.timeoutId);
                     this.isLoading = false;
                     console.error('Error:', error);
                     this.showToast('Atliekant užklausą įvyko klaida, bandykite iš naujo', 'danger');
-                });
+                }); 
         },
         fetchDetails(id) {
             this.modalLoading = true;
