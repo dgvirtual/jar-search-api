@@ -2,17 +2,17 @@
 
 /**
  * this file is usually run by cron, but could be run with command line arguments too
- * 
+ *
  * when run without parameters in command line it scraps one title (to get the same behaviour on a
  * get request you have to supply key=proxyKeyFromConfigFile get parameter)
- * 
+ *
  * possible parameters when running from command line:
  * `update` - perform the daily update of the main database by the scrapped names of individual enterprises
  * `ifnewmonth` (used together with `update`) - check if the monthly update of individual enterprises data should be performed and do it
- * `report` - show the statistics of scrapping 
+ * `report` - show the statistics of scrapping
  * `export_individual` - export scrapped data of individual enterprises to a csv file
- * 
- * possible GET parameters: 
+ *
+ * possible GET parameters:
  * download=individual - force download of the csv file of individual enterprises
  * debug= - echo data to the browser
  */
@@ -48,8 +48,9 @@ if (isset($argv[1]) && in_array('update', $argv)) {
         $lastImport = $db->getSetting('data_formed_persons');
         if ($lastUpdate < $lastImport) {
             $message .= 'Nereikia pilno atnaujinimo. Vykdymas nutraukiamas' . "\n";
-            if ($sendEmail)
+            if ($sendEmail) {
                 emailAdmin($subject, $message);
+            }
             exit;
         }
         $total = true;
@@ -70,17 +71,18 @@ if (isset($argv[1]) && in_array('update', $argv)) {
     }
     $noUpdated = $db->updatePersonsFromIndividual($total);
     $db->updateSetting('individual_last_update', date('Y-m-d'), 'string');
-    
+
     if (isset($noPurged)) {
         $message .= "Pašalinta pavadinimų iš individualių įmonių ir komanditinių ūkinių bendrijų sąrašo pasikeitus teisinei formai: " . $noPurged . "\n";
     }
     $message .= "Viso veikiančių individualių įmonių / komanditinių ūkinių bendrijų nesutvarkytais pavadinimais: " . $stats['targetRecords'] . "\n";
     $message .= "Gauta pavadinimų iš viso: " . $stats['totalRecords'] . "\n";
     $message .= "Šiandien atnaujinta pavadinimų: " . $noUpdated . "\n\n=======================\n\n";
-    $message .= getDailyLogContent(); 
+    $message .= getDailyLogContent();
 
-    if ($sendEmail)
+    if ($sendEmail) {
         emailAdmin($subject, $message);
+    }
     exit;
 }
 
@@ -88,18 +90,21 @@ if ((isset($argv[1]) && in_array('report', $argv)) || isset($_GET['report'])) {
 
     $stats = $db->getIndividualRecordCounts();
 
-    if (isset($_GET['report'])) echo "<pre>";
+    if (isset($_GET['report'])) {
+        echo "<pre>";
+    }
 
     $message .= "Viso veikiančių individualių įmonių ir komanditinių ūkinių bendrijų nesutvarkytais pavadinimais: " . $stats['targetRecords'] . "\r\n";
     $message .= "Gautų (sutvarkytų) pavadinimų iš viso: " . $stats['totalRecords'] . "\r\n";
     $message .= "Gautų (sutvarkytų) pavadinimų šiandien: " . $stats['recordsToday'] . "\r\n";
     $message .= "\n=======================\n\n";
-    $message .= getDailyLogContent(); 
+    $message .= getDailyLogContent();
 
     echo $subject . PHP_EOL;
     echo $message;
-    if ($sendEmail)
+    if ($sendEmail) {
         emailAdmin($subject, $message);
+    }
     exit;
 }
 

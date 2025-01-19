@@ -95,8 +95,21 @@ foreach ($fillResult as $key => $value) {
 }
 echo $message;
 
+$journalFileList = [];
+$journalParseMessage = '';
+
+if ($table === 'persons') {$html = file_get_contents(RC_WEB . JOURNAL_LIST_URL);
+    $result = getRCJournalEntries($html);
+    foreach ($result as $journalID => $journalDate) {
+        echo 'Scraping journal entry ' . $journalDate . PHP_EOL;
+        $journalFileList[] = 'Scrapped Journal of ' . $journalDate . PHP_EOL;
+        exec('scrapjournal.php journal ' . $journalID);
+    }
+    $journalParseMessage = PHP_EOL . 'Journal entries:' . PHP_EOL . implode(PHP_EOL, $journalFileList);
+}
+
 if ($sendEmail) {
-    emailAdmin('Lentelės "' . $table . '" atnaujinimo duomentys', $message);
+    emailAdmin('Lentelės "' . $table . '" atnaujinimo duomentys', $message . $journalParseMessage);
 }
 
 
