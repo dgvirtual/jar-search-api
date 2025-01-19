@@ -103,7 +103,7 @@ if ($table === 'persons') {$html = file_get_contents(RC_WEB . JOURNAL_LIST_URL);
     foreach ($result as $journalID => $journalDate) {
         echo 'Scraping journal entry ' . $journalDate . PHP_EOL;
         $journalFileList[] = 'Scrapped Journal of ' . $journalDate . PHP_EOL;
-        exec('scrapjournal.php journal ' . $journalID);
+        exec('php ' . BASE_DIR . 'data/scrapjournal.php journal ' . $journalID);
     }
     $journalParseMessage = PHP_EOL . 'Journal entries:' . PHP_EOL . implode(PHP_EOL, $journalFileList);
 }
