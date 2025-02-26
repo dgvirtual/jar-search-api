@@ -141,7 +141,7 @@ function legalPersonApp() {
             this.timeoutId = setTimeout(() => {
                 this.isLoading = false;
                 this.showToast('Užklausa trunka per ilgai. Galite bandyti iš naujo.', 'danger');
-            }, 7000);
+            }, 9000);
 
             fetch(url)
                 .then(response => response.json())
