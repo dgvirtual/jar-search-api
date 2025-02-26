@@ -34,8 +34,6 @@ if (!file_exists(DBFILE)) {
     require_once(BASE_DIR . 'data/initialize-db.php');
 }
 
-
-
 $message = '';
 $subject = 'scrapjournal.php išvestis';
 
@@ -45,53 +43,6 @@ if (!isset($db)) {
 
 $databaseCheckResult = $db->checkAndReindex();
 
-// echo 'Database opened' . PHP_EOL;exit;
-
-// // test
-
-// $entity = [
-//     "ja_pavadinimas" => "VšĮ SAVĘS PAŽINIMO IR SAVIRAIŠKOS STUDIJA",
-//     "ja_kodas" => 303011485,
-//     "form_kodas" => 570,
-//     "stat_kodas" => 0,
-//     "stat_data_nuo" => "2024-09-15",
-//     "formavimo_data" => "2024-09-15"
-// ];
-
-// // Prepare the update query
-// $query_str = 'UPDATE persons SET 
-//     ja_pavadinimas = :ja_pavadinimas, 
-//     form_kodas = :form_kodas, 
-//     stat_kodas = :stat_kodas, 
-//     stat_data_nuo = :stat_data_nuo, 
-//     formavimo_data = :formavimo_data 
-//     WHERE ja_kodas = :ja_kodas';
-
-// // Prepare the statement
-// $query = $db->prepare($query_str);
-
-// // Bind values
-// $query->bindValue(':ja_pavadinimas', $entity['ja_pavadinimas'], SQLITE3_TEXT);
-// $query->bindValue(':form_kodas', $entity['form_kodas'], SQLITE3_INTEGER);
-// $query->bindValue(':stat_kodas', $entity['stat_kodas'], SQLITE3_INTEGER);
-// $query->bindValue(':stat_data_nuo', $entity['stat_data_nuo'], SQLITE3_TEXT);
-// $query->bindValue(':formavimo_data', $entity['formavimo_data'], SQLITE3_TEXT);
-// $query->bindValue(':ja_kodas', $entity['ja_kodas'], SQLITE3_INTEGER);
-
-// // Execute the query
-// $result = $query->execute();
-
-// // Check if the update was successful
-// if ($result) {
-//     echo "Update successful.";
-// } else {
-//     echo "Update failed.";
-// }
-
-// exit;
-
-// // test end
-
 /**
  * statistics gathering and update of persons table block
  */
@@ -100,11 +51,10 @@ $sendEmail = ((isset($argv[1]) && in_array('sendemail', $argv)) || isset($_GET['
 
 // first argument should be journal, second - the number of journal
 if (isset($argv[2]) && in_array('journal', $argv) || isset($_GET['journal'])) {
-    $pdf_url = "https://www.registrucentras.lt/jar/infleid/download.do?oid=" . ($argv[2] ?? $_GET['journal']);
+    $pdf_url = RC_WEB . JOURNAL_DOWNLOAD_URL . ($argv[2] ?? $_GET['journal']);
 } else {
 
-    $url = 'https://www.registrucentras.lt/jar/infleid/publications.do';
-    $webpage = file_get_contents($url);
+    $webpage = file_get_contents(RC_WEB . JOURNAL_LIST_URL);
 
     if ($webpage === false) {
         die("Failed to fetch the page.");
@@ -113,7 +63,7 @@ if (isset($argv[2]) && in_array('journal', $argv) || isset($_GET['journal'])) {
     // Find the first occurrence of the download link using regex
     if (preg_match('/<a href="download\.do\?oid=(\d+)" target="_blank">/', $webpage, $matches)) {
         $oid = $matches[1];
-        $pdf_url = "https://www.registrucentras.lt/jar/infleid/download.do?oid=$oid";
+        $pdf_url = RC_WEB . JOURNAL_DOWNLOAD_URL . $oid;
     } else {
         die("Failed to find the download link.");
     }
@@ -138,18 +88,6 @@ exec($full_command, $output, $return_var);
 
 // input html
 $html = file_get_contents(BASE_DIR . 'writable/contents.html');
-
-// $pattern = 'writable\/content*';
-
-// // Use glob to find files matching the pattern
-// $files = glob($pattern);
-
-// // Loop through the files and delete each one
-// foreach ($files as $file) {
-//     if (is_file($file)) {
-//         @unlink($file);
-//     }
-// }
 
 // Parse the HTML and get the entities
 $entities = parseCRJournal($html);

@@ -93,6 +93,10 @@ if (!defined("RC_WEB"))
     define('RC_WEB', 'https://www.registrucentras.lt/');
 if (!defined("SCRAP_URL"))
     define('SCRAP_URL', 'jar/p/dok.php?kod=');
+if (!defined("JOURNAL_LIST_URL"))
+    define('JOURNAL_LIST_URL', 'jar/infleid/publications.do');
+if (!defined("JOURNAL_DOWNLOAD_URL"))
+    define('JOURNAL_DOWNLOAD_URL', 'jar/infleid/download.do?oid=');
 if (!defined("OPEN_DATA_PERSONS_URL"))
     define('OPEN_DATA_PERSONS_URL', 'aduomenys/?byla=JAR_IREGISTRUOTI.csv');
 if (!defined("OPEN_DATA_PERSONS_UNREG_URL"))

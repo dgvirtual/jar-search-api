@@ -1,4 +1,8 @@
-<?php if (count(get_included_files()) == 1) die('This file is not meant to be accessed directly.');
+<?php
+
+if (count(get_included_files()) == 1) {
+    die('This file is not meant to be accessed directly.');
+}
 
 function retrieveInfo($content, int $ja_kodas)
 {
@@ -21,12 +25,12 @@ function retrieveInfo($content, int $ja_kodas)
         } else {
             $person['tikr_statusas'] = 'Extraction error';
         }
-    } else if ($rezultatuNerastaFound !== false) {
+    } elseif ($rezultatuNerastaFound !== false) {
         $person['tikr_statusas'] = 'Not found';
-    } else if ($limitoVirsytasFound !== false) {
+    } elseif ($limitoVirsytasFound !== false) {
         $person['tikr_statusas'] = 'Limit exceeded';
     } else {
-        // perhaps it was the 
+        // perhaps it was the
         $person['tikr_statusas'] = 'Repeat';
     }
 
@@ -45,12 +49,12 @@ function getPageContent($url)
         curl_setopt(
             $ch,
             CURLOPT_RETURNTRANSFER,
-            TRUE
+            true
         );
         curl_setopt(
             $ch,
             CURLOPT_HEADER,
-            FALSE
+            false
         );
         curl_setopt(
             $ch,
@@ -125,7 +129,7 @@ function parseCRJournal(string $webpage): array
 
     // Split the document based on the pattern
     $blocks = preg_split($pattern, $html);
-    
+
     $entities = [];
 
     foreach ($blocks as $block) {
@@ -190,4 +194,47 @@ function parseCRJournal(string $webpage): array
         }
     }
     return $entities;
+}
+
+/**
+ * Retrieves the journals list from the CR journal page,
+ * from the newest one to the first one of the month, as array
+ * with 'oid' as key and 'date' as value.
+ *
+ * @param [type] $html
+ * @return array
+ */
+function getRCJournalEntries($html): array
+{
+    $dom = new DOMDocument();
+    @$dom->loadHTML($html);
+    $xpath = new DOMXPath($dom);
+
+    $entries = [];
+    $rows = $xpath->query('//tr');
+
+    foreach ($rows as $row) {
+        $dateNode = $xpath->query('.//td[1]', $row)->item(0);
+        $journalNumberNode = $xpath->query('.//td[2]', $row)->item(0);
+        $linkNode = $xpath->query('.//td[3]/a', $row)->item(0);
+
+        if ($dateNode && $journalNumberNode && $linkNode) {
+            $date = substr(trim($dateNode->nodeValue), 0, 10);
+            $journalNumber = trim($journalNumberNode->nodeValue);
+            $link = $linkNode->getAttribute('href');
+            preg_match('/oid=(\d+)/', $link, $matches);
+            $oid = $matches[1] ?? null;
+
+            if ($oid) {
+                $entries[$oid] = $date;
+            }
+
+            // Stop parsing if the date is the first day of the month
+            if (substr($date, -2) == '01') {
+                break;
+            }
+        }
+    }
+
+    return array_reverse($entries);
 }
