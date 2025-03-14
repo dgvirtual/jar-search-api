@@ -1,4 +1,8 @@
-<?php if (count(get_included_files()) == 1) die('This file is not meant to be accessed directly.');
+<?php
+
+if (count(get_included_files()) == 1) {
+    die('This file is not meant to be accessed directly.');
+}
 
 function logRequest(array $request): void
 {
@@ -26,10 +30,28 @@ function getDailyLogContent()
     }
 }
 
-function emailAdmin($subject, $message)
+function emailAdmin($subject, $message): bool
 {
     $headers = "From: " . FROM_EMAIL;
-    mail(ADMIN_EMAIL, $subject, $message, $headers);
+    return mail(ADMIN_EMAIL, $subject, $message, $headers);
+}
+
+function emailSubscriber($email, $subject, $message): bool
+{
+    $headers = "From: " . FROM_EMAIL . "\r\n";
+    $headers .= "MIME-Version: 1.0\r\n";
+    $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+    $message = '
+            <html>
+            <head>
+            <title>' . $subject . '</title>
+            </head>
+            <body>
+            <p>' . $message . '</p>
+            </body>
+            </html>
+            ';
+    return mail($email, $subject, $message, $headers);
 }
 
 function base_url()
@@ -115,5 +137,35 @@ function loadEnv($filePath)
                 define($key, $value);
             }
         }
+    }
+}
+
+
+if (! function_exists('d')) {
+    function d($data)
+    {
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
+        $caller = $backtrace[0];
+
+        echo '<pre style="background: #f4f4f4; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">';
+        echo '<strong>Debug at ' . $caller['file'] . ' (line ' . $caller['line'] . '):</strong><br><br>';
+
+        if (is_array($data) || is_object($data)) {
+            print_r($data);
+        } else {
+            var_dump($data);
+        }
+
+        echo '</pre>';
+    }
+}
+
+
+if (! function_exists('dd')) {
+    function dd($data)
+    {
+        d($data);
+
+        exit;
     }
 }

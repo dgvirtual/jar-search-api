@@ -14,7 +14,7 @@
  * debug= - echo data to the browser
  */
 
-ini_set('max_execution_time', '100');
+ini_set('max_execution_time', '200');
 require_once(__DIR__ . '/../config.php');
 require_once(BASE_DIR . 'data/data-functions.php');
 require_once(BASE_DIR . 'common/classes.php');
@@ -300,6 +300,10 @@ foreach ($entities as $entity) {
 //echo 'statuses_list: ' . PHP_EOL;
 //var_dump($statuses_list);
 
+//here, execute the other scrap file: 
+require_once(BASE_DIR . 'data/saveJournalToDb.php');
+
+
 $databaseCheckResult2 = $db->checkAndReindex();
 
 if ((isset($argv[1]) && in_array('report', $argv)) || isset($_GET['report'])) {
@@ -315,6 +319,7 @@ if ((isset($argv[1]) && in_array('report', $argv)) || isset($_GET['report'])) {
     $message .= "DB būklė; prieš atnaujinimą: " . ($databaseCheckResult ? "ok" : "ne ok") . "; po atnaujinimo: "  
         . ($databaseCheckResult2 ? "ok" : "ne ok") . ".\r\n";
     $message .= "\n=======================\n\n";
+    $message .= "Viso laiškų prenumeratoriams parengta: " . $countEmailsToBeSent . "\r\n";
 
     //var_dump($defective);
 
