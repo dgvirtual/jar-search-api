@@ -79,6 +79,16 @@ foreach ($subscriptions as $subscription) {
     }
 }
 
+//count subscriptions
+$verifiedCountQuery = $db->query('SELECT COUNT(*) AS verified_count FROM subscriptions WHERE verified = 1');
+$verifiedCountResult = $verifiedCountQuery->fetchArray(SQLITE3_ASSOC);
+$verifiedSubscriptionCount = $verifiedCountResult['verified_count'];
+
+//count subscribers
+$subscriberCountQuery = $db->query('SELECT COUNT(DISTINCT email) AS subscriber_count FROM subscriptions WHERE verified = 1');
+$subscriberCountResult = $subscriberCountQuery->fetchArray(SQLITE3_ASSOC);
+$subscriberCount = $subscriberCountResult['subscriber_count'];
+
 
 // Trigger the separate PHP process for sending emails
 if ($countEmailsToBeSent > 0) {

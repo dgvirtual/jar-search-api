@@ -320,6 +320,8 @@ if ((isset($argv[1]) && in_array('report', $argv)) || isset($_GET['report'])) {
         . ($databaseCheckResult2 ? "ok" : "ne ok") . ".\r\n";
     $message .= "\n=======================\n\n";
     $message .= "Viso laiškų prenumeratoriams parengta: " . $countEmailsToBeSent . "\r\n";
+    $message .= "Prenumeratų skaičius: " . $verifiedSubscriptionCount . "\r\n";
+    $message .= "Prenumeratorių skaičius: " . $subscriberCount . "\r\n";
 
     //var_dump($defective);
 

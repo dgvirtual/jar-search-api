@@ -1,6 +1,7 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
 require_once(__DIR__ . '/config.php');
 require_once(BASE_DIR . 'common/functions.php');
 require_once(BASE_DIR . 'back/api-functions.php');
@@ -35,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['person'], $_GET['verify
 
         $buttonBlock = '<div class="btn-group">
                     <a href="' . BASE_URL . '" class="btn btn-primary">Į svetainę</a>
-                    <button onclick="window.close();" class="btn btn-secondary">Uždaryti langą</button>
+                    <button onclick="window.close();" class="btn btn-danger">Uždaryti langą</button>
                 </div>';
         // Display confirmation page with legal person details
         $htmlContent = '
@@ -99,20 +100,31 @@ if (!$result = $personResult->fetchArray(SQLITE3_ASSOC)) {
     respond(404, 'Juridinis asmuo nerastas');
 }
 
-// Generate a verification ID
-$verification_id = bin2hex(random_bytes(10));
+$dublicates = $db->prepare('SELECT * FROM subscriptions WHERE ja_kodas = :ja_kodas AND email = :email AND verified = 1');
+$dublicates->bindValue(':ja_kodas', $ja_kodas, SQLITE3_INTEGER);
+$dublicates->bindValue(':email', $email, SQLITE3_TEXT);
+$dublicatesResult = $dublicates->execute();
 
-// Insert the subscription data into the subscriptions table
-$subscriptionQuery = $db->prepare('
+if ($foundDuplicates = $dublicatesResult->fetchArray(SQLITE3_ASSOC)) {
+
+
+    $subject = 'Pakartotinis bandymas prenumeruoti';
+    $message = 'Svetainėje „Juridinių asmenų paieška“ taugas pakartotinis prašymas prenumeruoti jums juridinio asmens <strong>' . $result['ja_pavadinimas'] .  '</strong> informaciją.<br>'
+    . 'Jūs jau prenumeruojate šio juridinio asmens informaciją, nieko papildomo daryti nereikia.';
+} else {
+    // Generate a verification ID
+    $verification_id = bin2hex(random_bytes(10));
+
+    // Insert the subscription data into the subscriptions table
+    $subscriptionQuery = $db->prepare('
     INSERT INTO subscriptions (email, ja_kodas, verification_id, created_at)
     VALUES (:email, :ja_kodas, :verification_id, :created_at)
-');
-$subscriptionQuery->bindValue(':email', $email, SQLITE3_TEXT);
-$subscriptionQuery->bindValue(':ja_kodas', $ja_kodas, SQLITE3_INTEGER);
-$subscriptionQuery->bindValue(':verification_id', $verification_id, SQLITE3_TEXT);
-$subscriptionQuery->bindValue(':created_at', TIMESTAMP, SQLITE3_TEXT);
-
-if ($subscriptionQuery->execute()) {
+    ');
+    $subscriptionQuery->bindValue(':email', $email, SQLITE3_TEXT);
+    $subscriptionQuery->bindValue(':ja_kodas', $ja_kodas, SQLITE3_INTEGER);
+    $subscriptionQuery->bindValue(':verification_id', $verification_id, SQLITE3_TEXT);
+    $subscriptionQuery->bindValue(':created_at', TIMESTAMP, SQLITE3_TEXT);
+    
     // Send confirmation email
     $subject = 'Patvirtinkite informacijos prenumeratą';
     $message = 'Sveiki,<br><br>';
@@ -122,7 +134,12 @@ if ($subscriptionQuery->execute()) {
     $message .= 'Prašome patvirtinti prenumeratą paspaudžiant šią nuorodą:<br>';
     $message .= '<strong><a href="' . BASE_URL . 'subscribe.php?person=' . $ja_kodas . '&verify=' . $verification_id . '">patvirtinti prenumeratą</a></strong>';
     $message .= '<br><br><br>Jei informacijos neprenumeravote, tiesiog ignoruokite šį laišką.<br><br>';
+}
+
+if ($foundDuplicates || $subscriptionQuery->execute()) {
+
     if (emailSubscriber($email, $subject, $message)) {
+        // privatumo tikslais rodom sėkmės pranešimą nepriklausomai nuo to, ar prenumerata jau egzistuoja
         respond(200, 'Prenumerata sukurta. Prašome patikrinti savo el. paštą, kad patvirtintumėte.');
     } else {
         respond(500, 'Nepavyko išsiųsti patvirtinimo el. laiško');

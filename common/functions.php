@@ -30,17 +30,33 @@ function getDailyLogContent()
     }
 }
 
+/*
+* Extract the email address from a string
+* @param string $string
+* @return string|null
+*/
+function extractEmail($string)
+{
+    // Use a regular expression to match the email address
+    if (preg_match('/<([^>]+)>/', $string, $matches)) {
+        return $matches[1];
+    }
+    return null;
+}
+
 function emailAdmin($subject, $message): bool
 {
     $headers = "From: " . FROM_EMAIL;
-    return mail(ADMIN_EMAIL, $subject, $message, $headers);
+    return mail(ADMIN_EMAIL, $subject, $message, $headers,  "-f" . extractEmail(FROM_EMAIL));
 }
+
 
 function emailSubscriber($email, $subject, $message): bool
 {
     $headers = "From: " . FROM_EMAIL . "\r\n";
     $headers .= "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+
     $message = '
             <html>
             <head>
@@ -51,7 +67,8 @@ function emailSubscriber($email, $subject, $message): bool
             </body>
             </html>
             ';
-    return mail($email, $subject, $message, $headers);
+    // Set envelope sender with -f
+    return mail($email, $subject, $message, $headers, "-f" . extractEmail(FROM_EMAIL));
 }
 
 function base_url()
