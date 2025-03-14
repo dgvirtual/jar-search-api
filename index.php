@@ -79,6 +79,9 @@ if (!file_exists(DBFILE)) {
         <p class="mt-3">Čia galima atlikti informatyvių paieškų, ir jūsų neerzins <em>Captcha</em> paveikslėliai. Norite sužinoti, <em>kiek įmonių įregistruota jūsų name</em>? Ar name, gatvėje, miestelyje <em>yra religinių bendruomenių</em>? Ar <em>Jūsų planuojamame įsigyti būste nėra įregistruotų įmonių</em>? Kiek mažųjų bendrijų yra jūsų miestelyje? O kiek - Lietuvoje? Visa tai galite sužinoti atlikę paiešką čia.</p>
         <p><em>Programoje naudojami Juridinių asmenų registro atviri duomenys (<a href="#dataDocs">plačiau</a>).</em></p>
 
+        <div class="alert alert-success mt-3" role="alert">
+            <strong>NAUJA!</strong> Galite <strong> užsiprenumeruoti</strong> pranešimus apie Juridinių asmenų duomenų pakeitimus. Tai galite padaryti paspaudę <button class="btn btn-outline-danger"><i class="bi bi-bell"></i></button> ties juridinio asmens įrašu paieškos lentelėje.
+        </div>
 
         <div class="row" style="max-width:600px;">
             <div class="col col-12">
@@ -224,7 +227,7 @@ if (!file_exists(DBFILE)) {
                         <th style="white-space: nowrap;">Registr. data</th>
                         <th>Teisinė forma</th>
                         <th>Teisinis statusas</th>
-                        <th>Patikra</th>
+                        <th>Veiksmai</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -236,7 +239,10 @@ if (!file_exists(DBFILE)) {
                             <td x-text="person.ja_reg_data"></td>
                             <td x-text="person.form_pavadinimas"></td>
                             <td x-text="person.stat_pavadinimas"></td>
-                            <td><a href="#" @click.prevent="fetchDetails(person.ja_kodas)" data-bs-toggle="modal" data-bs-target="#detailsModal"><i class="bi bi-search"></i></a></td>
+                            <td class="text-end">
+                                <a href="#" title="Peržiūrėti duomenis" class="text-success" @click.prevent="fetchDetails(person.ja_kodas)" data-bs-toggle="modal" data-bs-target="#detailsModal"><i class="bi bi-search"></i></a>
+                                <a href="#" title="Prenumeruoti pakeitimus" class="text-danger" @click.prevent="subscribe(person.ja_kodas)" data-bs-toggle="modal" data-bs-target="#subscribeModal"><i class="bi bi-bell"></i></a>
+                            </td>
                         </tr>
                     </template>
                 </tbody>
@@ -252,6 +258,36 @@ if (!file_exists(DBFILE)) {
             </div>
         </div>
 
+        <!-- Subscribe Modal -->
+        <div class="modal fade" id="subscribeModal" tabindex="-1" aria-labelledby="subscribeModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="subscribeModalLabel">Prenumeruoti pranešimus</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Žemiau įrašę savo el. pašto adresą galite prenumeruoti šio juridinio asmens viešus pranešimus bei Registro tvarkytojo pranešimus apie šio juridinio asmens duomenų ir informacijos pakeitimus. </p>
+                        <form id="subscribeForm" @submit.prevent="submitSubscription">
+                            <input type="hidden" id="legalPersonCode" x-model="subscription.ja_kodas">
+                            <div class="mb-3">
+                                <label for="legalPersonName" class="form-label">Juridinio asmens pavadinimas</label>
+                                <input type="text" class="form-control" id="legalPersonName" x-model="subscription.ja_pavadinimas" disabled>
+                            </div>
+                            <div class="mb-3">
+                                <label for="subscriberEmail" class="form-label">Jūsų el. pašto adresas</label>
+                                <input type="email" class="form-control" id="subscriberEmail" x-model="subscription.email" required>
+                            </div>
+                            <div class="btn-group float-end">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Atšaukti</button>
+                                <button type="submit" class="btn btn-primary">Prenumeruoti</button>
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Details Modal -->
         <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">

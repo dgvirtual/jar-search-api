@@ -31,6 +31,11 @@ function fetchICUInfo() {
 
 function legalPersonApp() {
     return {
+        subscription: {
+            ja_kodas: '',
+            ja_pavadinimas: '',
+            email: ''
+        },
         legalPersonIds: '',
         legalPersonTitle: '',
         legalPersonAddr: '',
@@ -49,6 +54,53 @@ function legalPersonApp() {
         modalLoading: false,
         selectedPerson: null,
         cache: new Map(),
+
+        subscribe(ja_kodas) {
+            const person = this.legalPersons.find(p => p.ja_kodas === ja_kodas);
+            if (person) {
+                this.subscription.ja_kodas = person.ja_kodas;
+                this.subscription.ja_pavadinimas = person.ja_pavadinimas;
+                this.subscription.email = '';
+            }
+        },
+
+        async submitSubscription() {
+            try {
+                const response = await fetch('subscribe.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(this.subscription)
+                });
+                const result = await response.json();
+                if (result.status_code === 200) {
+                    this.showToast('Prenumeratos prašymas gautas! Ją dar turite patvirtinti, žr. el.p. dėžutę.', 'success');
+                    this.hideModal('subscribeModal');
+                } else {
+                    this.showToast('Nepavyko sukurti prenumeratos.', 'danger');
+                }
+            } catch (error) {
+                this.showToast('Įvyko klaida.', 'danger');
+            }
+        },
+
+        showToast(message, type) {
+            this.toastContent = message;
+            this.toastClass = `toast align-items-center text-bg-${type} border-0`;
+            this.toastVisible = true;
+            setTimeout(() => {
+                this.toastVisible = false;
+            }, 3000);
+        },
+
+        hideModal(modalId) {
+            const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
+            if (modal) {
+                modal.hide();
+            }
+        },
+
         clearUnregDates() {
             if (!this.showLiquidated) {
                 this.unregFrom = this.unregTo = '';
