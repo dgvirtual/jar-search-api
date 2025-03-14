@@ -95,7 +95,7 @@ $personQuery = $db->prepare('SELECT * FROM persons WHERE ja_kodas = :ja_kodas');
 $personQuery->bindValue(':ja_kodas', $ja_kodas, SQLITE3_INTEGER);
 $personResult = $personQuery->execute();
 
-if (!$personResult->fetchArray(SQLITE3_ASSOC)) {
+if (!$result = $personResult->fetchArray(SQLITE3_ASSOC)) {
     respond(404, 'Juridinis asmuo nerastas');
 }
 
@@ -116,12 +116,12 @@ if ($subscriptionQuery->execute()) {
     // Send confirmation email
     $subject = 'Patvirtinkite informacijos prenumeratą';
     $message = 'Sveiki,<br><br>';
-    $message .= 'Jūsų el. paštas buvo nurodytas svetainėje „Juridinių asmenų paieška“ prenumeruojant juridinio asmens duomenis.<br>';
+    $message .= 'Jūsų el. paštas buvo nurodytas svetainėje „Juridinių asmenų paieška“ prenumeruojant juridinio asmens <strong>' . $result['ja_pavadinimas'] .  '</strong> informaciją.<br>';
     $message .= 'Galima sudaryti ne daugiau nei 10-ties juridinių asmenų informacinių pranešimų prenumeratų. Prenumeratos nemokamos. <br>';
     $message .= 'Prenumeratos teikiamos be tikslumo ar išsamumo garantijų.<br><br>';
     $message .= 'Prašome patvirtinti prenumeratą paspaudžiant šią nuorodą:<br>';
-    $message .= '<a href="' . BASE_URL . 'subscribe.php?person=' . $ja_kodas . '&verify=' . $verification_id . '">Patvirtinti prenumeratą</a>';
-
+    $message .= '<strong><a href="' . BASE_URL . 'subscribe.php?person=' . $ja_kodas . '&verify=' . $verification_id . '">patvirtinti prenumeratą</a></strong>';
+    $message .= '<br><br><br>Jei informacijos neprenumeravote, tiesiog ignoruokite šį laišką.<br><br>';
     if (emailSubscriber($email, $subject, $message)) {
         respond(200, 'Prenumerata sukurta. Prašome patikrinti savo el. paštą, kad patvirtintumėte.');
     } else {

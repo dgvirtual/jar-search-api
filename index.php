@@ -240,8 +240,10 @@ if (!file_exists(DBFILE)) {
                             <td x-text="person.form_pavadinimas"></td>
                             <td x-text="person.stat_pavadinimas"></td>
                             <td class="text-end">
-                                <a href="#" title="Peržiūrėti duomenis" class="text-success" @click.prevent="fetchDetails(person.ja_kodas)" data-bs-toggle="modal" data-bs-target="#detailsModal"><i class="bi bi-search"></i></a>
-                                <a href="#" title="Prenumeruoti pakeitimus" class="text-danger" @click.prevent="subscribe(person.ja_kodas)" data-bs-toggle="modal" data-bs-target="#subscribeModal"><i class="bi bi-bell"></i></a>
+                                <div class="btn-group">
+                                    <a href="#" class="btn btn-success btn-sm" title="Peržiūrėti duomenis" class="text-success" @click.prevent="fetchDetails(person.ja_kodas)" data-bs-toggle="modal" data-bs-target="#detailsModal"><i class="bi bi-search"></i></a>
+                                    <a href="#" class="btn btn-danger btn-sm" title="Prenumeruoti pakeitimus" class="text-danger" @click.prevent="subscribe(person.ja_kodas)" data-bs-toggle="modal" data-bs-target="#subscribeModal"><i class="bi bi-bell"></i></a>
+                                </div>
                             </td>
                         </tr>
                     </template>
