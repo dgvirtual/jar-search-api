@@ -85,8 +85,11 @@ if (isset($GLOBALS['SCRAP_PROXIES']) && is_array($GLOBALS['SCRAP_PROXIES'])) {
 if (!defined("SUBSCRIPTIONS_UNLIMITED"))
     define("SUBSCRIPTIONS_UNLIMITED", "");
 
-    if (!defined("SUBSCRIPTION_LIMIT"))
+if (!defined("SUBSCRIPTION_LIMIT"))
     define("SUBSCRIPTION_LIMIT", "10");
+
+if (!defined("SALT"))
+    define("SALT", "SDTDRTGDaetr");
 
 /***********************************************************************
  *** Beyond this point you will probably not have to change anything ***

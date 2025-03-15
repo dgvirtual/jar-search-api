@@ -231,3 +231,8 @@ function getVerifiedSubscriptions($db, $email): array
         'manageKey' => $manageKey
     ];
 }
+
+function saltedEmailHash($email)
+{
+    return substr(hash('sha256', strtolower($email) . SALT), 0 , 30);
+}

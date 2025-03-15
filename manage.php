@@ -6,7 +6,14 @@ require_once(BASE_DIR . 'back/api-functions.php');
 require_once(BASE_DIR . 'common/classes.php');
 
 // Connect to the database
-$db = new mySQLite3(BASE_DIR . DBFILE);
+if (!isset($db)) {
+    $db = new mySQLite3(BASE_DIR . DBFILE);
+}
+
+$buttonBlock = '<div class="btn-group">
+                    <a href="' . BASE_URL . '" class="btn btn-primary">Į svetainę</a>
+                    <button onclick="window.close();" class="btn btn-danger">Uždaryti langą</button>
+                </div>';
 
 $unlimitedEmails = array_map('trim', explode(',', SUBSCRIPTIONS_UNLIMITED));
 
@@ -15,14 +22,23 @@ $email = isset($_REQUEST['email']) ? $_REQUEST['email'] : null;
 $key = isset($_REQUEST['key']) ? $_REQUEST['key'] : null;
 
 if (!$email || !$key) {
-    die('Invalid request. Missing email or key.');
+    header('Location: ' . BASE_URL);
+    exit;
 }
 
 // Get verified subscriptions and manage key
 $subscriptionData = getVerifiedSubscriptions($db, $email);
 
-// Verify the key
-if ($subscriptionData['manageKey'] === $key) {
+// case when there are no subscriptions, and the key represents the email+salt hash
+if (saltedEmailHash($email) === $key) {
+    // Display the subscriptions data in a form
+    $htmlContent = '
+                <div class="alert alert-warning mt-5" role="alert">
+                    <h4 class="alert-heading">Sistemoje nėra (nebėra) Jūsų prenumeratų</h4>
+                    <p>Galite prenumeruoti naujienas apie juridinius asmenis sugrįžę į paieškos puslapį.</p>
+                    ' . $buttonBlock . '
+                </div>';
+} elseif ($subscriptionData['manageKey'] === $key) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Handle form submission
         $subscriptions = isset($_POST['subscriptions']) ? $_POST['subscriptions'] : [];
@@ -66,6 +82,9 @@ if ($subscriptionData['manageKey'] === $key) {
         // Generate a new manage key
         $newSubscriptionData = getVerifiedSubscriptions($db, $email);
         $newKey = $newSubscriptionData['manageKey'];
+        if (empty($newKey)) {
+            $newKey = saltedEmailHash($email);
+        }
 
         // Redirect to the form page with a success toast
         header('Location: ' . BASE_URL . 'manage.php?email=' . urlencode($email) . '&key=' . $newKey . '&toast=success');
@@ -84,7 +103,7 @@ if ($subscriptionData['manageKey'] === $key) {
 
     // Display the subscriptions data in a form
     $htmlContent = '
-        <div class="container my-5" style="max-width: 900px;">
+        <div class="my-3" style="max-width: 900px;">
             <h2>Tvarkyti prenumeratas</h2>';
 
     if (!in_array($email, $unlimitedEmails)) {
@@ -133,28 +152,39 @@ if ($subscriptionData['manageKey'] === $key) {
     $message = 'Prenumeratas galite tvarkyti pasinaudoję šia nuoroda (nuoroda galios iki pirmo prenumeratų pakeitimo):<br>';
     $message .= '<a href="' . BASE_URL . 'manage.php?email=' . urlencode($email) . '&key=' . $subscriptionData['manageKey'] . '">Tvarkyti prenumeratas</a>';
 
-    $displayMessage = '<p>Prenumeratų neturite, arba verifikavimo kodas nebegalioja.<br> Jei prenumeratų turite, el. laiškas buvo išsiųstas adresu ' . htmlspecialchars($email) . ' su nuoroda kurią paspaudę galėsite tvarkyti prenumeratas.</p>';
+    if ($key === 'GetNewKey') {
+        $startString = 'Pateikėte prašymą dėl tvarkymo nuorodos gavimo. ';
+    } else {
+        $startString = 'Prenumeratų neturite, arba verifikavimo kodas nebegalioja. ';
+    }
+
+    $displayMessage = '<p> ' . $startString . '<br> Jei prenumeratų turite, el. laiškas buvo išsiųstas adresu ' . htmlspecialchars($email) . ' su nuoroda kurią paspaudę galėsite tvarkyti prenumeratas.</p>';
 
     if ($subscriptionData['count'] === 0 || emailSubscriber($email, $subject, $message)) {
-        $htmlContent = $displayMessage;
+        $htmlContent = '
+        <div class="container my-5">
+            <div class="alert alert-info mt-5" role="alert">
+                <h4 class="alert-heading">Prenumeratų tvarkymo nuorodos</h4>
+                ' . $displayMessage . $buttonBlock . '
+            </div>
+        </div>';
     } else {
-        $htmlContent = '<p>Nepavyko išsiųsti el. laiško. Prašome bandyti dar kartą vėliau.</p>';
+        $htmlContent = '
+        <div class="container my-5" style="max-width: 900px;">
+            <div class="alert alert-danger mt-5" role="alert">
+                <h4 class="alert-heading">Prenumeratų tvarkymo nuorodos</h4>
+                <p>El. laiško išsiųsti nepavyko. Bandykite dar kartą arba susisiekite su administratoriumi.</p>
+                ' . $buttonBlock . '
+            </div>
+        </div>';
     }
 }
 
-// Print the HTML page
-echo '<!DOCTYPE html>
-<html lang="lt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tvarkyti prenumeratas</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
-</head>
-<body>
-    ' . $htmlContent . '
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+include(BASE_DIR . 'views/header.php');
+
+echo $htmlContent;
+
+echo '<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
         <div id="toast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body" id="toastMessage"></div>
@@ -179,6 +209,6 @@ echo '<!DOCTYPE html>
                 toast.show();
             }
         });
-    </script>
-</body>
-</html>';
+    </script>';
+
+include(BASE_DIR . 'views/footer.php');

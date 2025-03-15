@@ -12,6 +12,11 @@ if (!isset($db)) {
     $db = new mySQLite3(BASE_DIR . DBFILE);
 }
 
+$buttonBlock = '<div class="btn-group">
+                    <a href="' . BASE_URL . '" class="btn btn-primary">Į svetainę</a>
+                    <button onclick="window.close();" class="btn btn-danger">Uždaryti langą</button>
+                </div>';
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['person'], $_GET['verify'])) {
     $ja_kodas = $_GET['person'];
     $verification_id = $_GET['verify'];
@@ -46,10 +51,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['person'], $_GET['verify
         $personResult = $personQuery->execute();
         $person = $personResult->fetchArray(SQLITE3_ASSOC);
 
-        $buttonBlock = '<div class="btn-group">
-                    <a href="' . BASE_URL . '" class="btn btn-primary">Į svetainę</a>
-                    <button onclick="window.close();" class="btn btn-danger">Uždaryti langą</button>
-                </div>';
         // Display confirmation page with legal person details
         $htmlContent = '
             <div class="alert alert-success mt-5" role="alert">
@@ -76,21 +77,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['person'], $_GET['verify
             '</div>';
     }
 
-    // Print the HTML page
-    echo '<!DOCTYPE html>
-    <html lang="lt">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Prenumeratos patvirtinimas</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        </head>
-    <body>
-        <div class="container">' . $htmlContent . '</div>
-    </body>
-    </html>';
-
-    return;
+include(BASE_DIR . 'views/header.php');
+echo $htmlContent;
+include(BASE_DIR . 'views/footer.php');
+return;
 }
 
 $data = json_decode(file_get_contents('php://input'), true);

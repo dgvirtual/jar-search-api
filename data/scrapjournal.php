@@ -2,13 +2,13 @@
 
 /**
  * this file is usually run by cron, but could be run with command line arguments too
- * 
+ *
  * when run without parameters in command line it gets the latest journal of RC, extracts its info and updates the database.
- * 
+ *
  * possible parameters when running from command line:
  * `update` - perform the daily update of the main database by the scrapped names of individual enterprises
- * 
- * possible GET parameters: 
+ *
+ * possible GET parameters:
  * key=adasdšasdš - key for access via get method
  * sendemail= - send email with results
  * debug= - echo data to the browser
@@ -34,8 +34,8 @@ if (!file_exists(DBFILE)) {
     require_once(BASE_DIR . 'data/initialize-db.php');
 }
 
-$message = '';
-$subject = 'scrapjournal.php išvestis';
+$messageJ = '';
+$subjectJ = 'scrapjournal.php išvestis';
 
 if (!isset($db)) {
     $db = new mySQLite3(BASE_DIR . DBFILE);
@@ -179,7 +179,7 @@ foreach ($entities as $entity) {
             $entity['problem'] = 'unsuccessful update';
             $defective[] = $entity;
         }
-    } elseif($case === 'exists') {
+    } elseif ($case === 'exists') {
 
         $entity['problem'] = 'entry exists but was marked for registration';
         $defective[] = $entity;
@@ -266,7 +266,8 @@ foreach ($entities as $entity) {
             } else {
                 $query = $db->prepare('UPDATE individual SET ja_pavadinimas = :ja_pavadinimas, tikr_statusas = :tikr_statusas, tikr_data = :tikr_data WHERE ja_kodas = :ja_kodas');
             }
-            $query->bindValue(':ja_kodas',
+            $query->bindValue(
+                ':ja_kodas',
                 $entity['ja_kodas'],
                 SQLITE3_INTEGER
             );
@@ -281,7 +282,8 @@ foreach ($entities as $entity) {
                 SQLITE3_TEXT
             );
             //var_dump($entity);
-            $query->bindValue(':tikr_data',
+            $query->bindValue(
+                ':tikr_data',
                 ($entity['ja_reg_data'] ?? ($entity['pakeit_data'] ?? $entity['isreg_data'])),
                 SQLITE3_TEXT
             );
@@ -300,7 +302,7 @@ foreach ($entities as $entity) {
 //echo 'statuses_list: ' . PHP_EOL;
 //var_dump($statuses_list);
 
-//here, execute the other scrap file: 
+//here, execute the other scrap file:
 require_once(BASE_DIR . 'data/saveJournalToDb.php');
 
 
@@ -308,27 +310,30 @@ $databaseCheckResult2 = $db->checkAndReindex();
 
 if ((isset($argv[1]) && in_array('report', $argv)) || isset($_GET['report'])) {
 
-    if (isset($_GET['report'])) echo "<pre>";
+    if (isset($_GET['report'])) {
+        echo "<pre>";
+    }
 
-    $message .= "Viso įrašų žurnale: " . count($entities) . "\r\n";
-    $message .= "Su klaidom, praleista:" . count($defective) . "\r\n";
-    $message .= "Įregistruota:" . count($registered) . "\r\n";
-    $message .= "Išregistruota:" . count($unregistered) . "\r\n";
-    $message .= "Atnaujinta:" . count($updated) . "\r\n";
-    $message .= "Individualių įmonių/komanditinių/tikrųjų ūkinių bendrovių: " . $individual . ' (nepavyko: ' . $individual_fail . ")\r\n";
-    $message .= "DB būklė; prieš atnaujinimą: " . ($databaseCheckResult ? "ok" : "ne ok") . "; po atnaujinimo: "  
+    $messageJ .= "Viso įrašų žurnale: " . count($entities) . "\r\n";
+    $messageJ .= "Su klaidom, praleista:" . count($defective) . "\r\n";
+    $messageJ .= "Įregistruota:" . count($registered) . "\r\n";
+    $messageJ .= "Išregistruota:" . count($unregistered) . "\r\n";
+    $messageJ .= "Atnaujinta:" . count($updated) . "\r\n";
+    $messageJ .= "Individualių įmonių/komanditinių/tikrųjų ūkinių bendrovių: " . $individual . ' (nepavyko: ' . $individual_fail . ")\r\n";
+    $messageJ .= "DB būklė; prieš atnaujinimą: " . ($databaseCheckResult ? "ok" : "ne ok") . "; po atnaujinimo: "
         . ($databaseCheckResult2 ? "ok" : "ne ok") . ".\r\n";
-    $message .= "\n=======================\n\n";
-    $message .= "Viso laiškų prenumeratoriams parengta: " . $countEmailsToBeSent . "\r\n";
-    $message .= "Prenumeratų skaičius: " . $verifiedSubscriptionCount . "\r\n";
-    $message .= "Prenumeratorių skaičius: " . $subscriberCount . "\r\n";
+    $messageJ .= "\n=======================\n\n";
+    $messageJ .= "Viso laiškų prenumeratoriams parengta: " . $countEmailsToBeSent . "\r\n";
+    $messageJ .= "Prenumeratų skaičius: " . $verifiedSubscriptionCount . "\r\n";
+    $messageJ .= "Prenumeratorių skaičius: " . $subscriberCount . "\r\n";
 
     //var_dump($defective);
 
-    echo $subject . PHP_EOL;
-    echo $message;
-    if ($sendEmail)
-        emailAdmin($subject, $message);
+    echo $subjectJ . PHP_EOL;
+    echo $messageJ;
+    if ($sendEmail) {
+        emailAdmin($subjectJ, $messageJ);
+    }
     exit;
 }
 
