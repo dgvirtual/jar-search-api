@@ -125,7 +125,8 @@ if ($foundDuplicates = $dublicatesResult->fetchArray(SQLITE3_ASSOC)) {
 } elseif ($subscriptionData['maxedOut']) {
     $subject = 'Išnaudotas prenumeratų limitas';
     $message = 'Svetainėje „Juridinių asmenų paieška“ gautas prašymas prenumeruoti jums juridinio asmens <strong>' . $result['ja_pavadinimas'] .  '</strong> informaciją.<br>'
-    . 'Tačiau Jūsų prenumeratų limitas (' . SUBSCRIPTION_LIMIT . ') jau išnaudotas. Norėdami sukurti daugiau prenumeratų, prašome rašyti svetainės administratoriui adresu <em><a href="mailto:' . ADMIN_EMAIL . '">' . ADMIN_EMAIL . '</a><em>.';
+    . 'Tačiau Jūsų prenumeratų limitas (' . SUBSCRIPTION_LIMIT . ') jau išnaudotas. Norėdami sukurti daugiau prenumeratų, prašome rašyti svetainės administratoriui adresu <em><a href="mailto:' . ADMIN_EMAIL . '">' . ADMIN_EMAIL . '</a></em>.';
+    $message .= '<br><br>' . $manageString;
 } else {
     // Generate a verification ID
     $verification_id = bin2hex(random_bytes(10));
@@ -139,7 +140,6 @@ if ($foundDuplicates = $dublicatesResult->fetchArray(SQLITE3_ASSOC)) {
     $subscriptionQuery->bindValue(':ja_kodas', $ja_kodas, SQLITE3_INTEGER);
     $subscriptionQuery->bindValue(':verification_id', $verification_id, SQLITE3_TEXT);
     $subscriptionQuery->bindValue(':created_at', TIMESTAMP, SQLITE3_TEXT);
-
     // Send confirmation email
     $subject = 'Patvirtinkite informacijos prenumeratą';
     $message = 'Sveiki,<br><br>';
@@ -154,7 +154,7 @@ if ($foundDuplicates = $dublicatesResult->fetchArray(SQLITE3_ASSOC)) {
     $message .= '<br><br><br>Jei informacijos neprenumeravote, tiesiog ignoruokite šį laišką.<br><br>';
 }
 
-if ($foundDuplicates || $subscriptionQuery->execute()) {
+if ($foundDuplicates || $subscriptionData['maxedOut'] || $subscriptionQuery->execute()) {
 
     if (emailSubscriber($email, $subject, $message)) {
         // privatumo tikslais rodom sėkmės pranešimą nepriklausomai nuo to, ar prenumerata jau egzistuoja

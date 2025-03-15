@@ -66,7 +66,7 @@ if (count(get_included_files()) == 1) {
 
         <nav class="navbar bg-body-tertiary">
             <div class="container">
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href="<?= BASE_URL ?>">
                     <img src="<?= BASE_URL ?>/favicon.png" alt="Logo" width="32" height="32"> Juridinių asmenų paieška
                 </a>
             </div>
