@@ -79,6 +79,14 @@ if (isset($GLOBALS['SCRAP_PROXIES']) && is_array($GLOBALS['SCRAP_PROXIES'])) {
     ));
 }
 
+/**
+ * Emails exempt from subscriber limitations, comma separated list (spaces will be trimmed)
+ */
+if (!defined("SUBSCRIPTIONS_UNLIMITED"))
+    define("SUBSCRIPTIONS_UNLIMITED", "");
+
+    if (!defined("SUBSCRIPTION_LIMIT"))
+    define("SUBSCRIPTION_LIMIT", "10");
 
 /***********************************************************************
  *** Beyond this point you will probably not have to change anything ***
@@ -137,7 +145,7 @@ else
  * Name of the API file.
  */
 if (!defined("API_FILE"))
-define("API_FILE", "api.php");
+    define("API_FILE", "api.php");
 
 /**
  * Default time zone and locale (locale is important for data sorting functions of the database).

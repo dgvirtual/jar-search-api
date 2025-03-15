@@ -1,14 +1,16 @@
 <?php
 
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 require_once(__DIR__ . '/config.php');
 require_once(BASE_DIR . 'common/functions.php');
 require_once(BASE_DIR . 'back/api-functions.php');
 require_once(BASE_DIR . 'common/classes.php');
 
 // Connect to the database
-$db = new mySQLite3(BASE_DIR . DBFILE);
+if (!isset($db)) {
+    $db = new mySQLite3(BASE_DIR . DBFILE);
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['person'], $_GET['verify'])) {
     $ja_kodas = $_GET['person'];
@@ -21,8 +23,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['person'], $_GET['verify
     $subscriptionResult = $subscriptionQuery->execute();
 
     $htmlContent = '';
+    $subscription = $subscriptionResult->fetchArray(SQLITE3_ASSOC);
 
-    if ($subscription = $subscriptionResult->fetchArray(SQLITE3_ASSOC)) {
+    // Check if the subscription limit is reached
+    $subscriptionData = getVerifiedSubscriptions($db, $subscription['email']);
+    if ($subscriptionData['maxedOut']) {
+        $htmlContent = '
+            <div class="alert alert-warning mt-5" role="alert">
+                <h4 class="alert-heading">Prenumeratų limitas pasiektas!</h4>
+                <p>Jūs pasiekėte maksimalų patvirtintų prenumeratų skaičių. Prenumeratas galite tvarkyti čia: 
+                <a href="' . BASE_URL . 'manage.php?email=' . urlencode($subscription['email']) . '&key=' . $subscriptionData['manageKey'] . '">tvarkyti prenumeratas</a></p>
+            </div>';
+    } elseif (!empty($subscription)) {
         // Update the subscription to verified
         $updateQuery = $db->prepare('UPDATE subscriptions SET verified = 1 WHERE id = :id');
         $updateQuery->bindValue(':id', $subscription['id'], SQLITE3_INTEGER);
@@ -105,34 +117,50 @@ $dublicates->bindValue(':ja_kodas', $ja_kodas, SQLITE3_INTEGER);
 $dublicates->bindValue(':email', $email, SQLITE3_TEXT);
 $dublicatesResult = $dublicates->execute();
 
+// Load environment variables
+$unlimitedEmails = array_map('trim', explode(',', SUBSCRIPTIONS_UNLIMITED));
+$subscriptionLimit = (int)SUBSCRIPTION_LIMIT;
+
+// get verified subscription management key and whether subscription limit is reached
+$subscriptionData = getVerifiedSubscriptions($db, $email);
+
+// write the email string with subscriptions management link
+$manageString = 'Prenummeratas galite tvarkyti čia: <a href="' . BASE_URL . 'manage.php?email=' . urlencode($email) . '&key=' . $subscriptionData['manageKey'] . '">tvarkyti prenumeratas</a>'; 
+
 if ($foundDuplicates = $dublicatesResult->fetchArray(SQLITE3_ASSOC)) {
 
-
     $subject = 'Pakartotinis bandymas prenumeruoti';
-    $message = 'Svetainėje „Juridinių asmenų paieška“ taugas pakartotinis prašymas prenumeruoti jums juridinio asmens <strong>' . $result['ja_pavadinimas'] .  '</strong> informaciją.<br>'
+    $message = 'Svetainėje „Juridinių asmenų paieška“ gautas pakartotinis prašymas prenumeruoti jums juridinio asmens <strong>' . $result['ja_pavadinimas'] .  '</strong> informaciją.<br>'
     . 'Jūs jau prenumeruojate šio juridinio asmens informaciją, nieko papildomo daryti nereikia.';
+} elseif ($subscriptionData['maxedOut']) {
+    $subject = 'Išnaudotas prenumeratų limitas';
+    $message = 'Svetainėje „Juridinių asmenų paieška“ gautas prašymas prenumeruoti jums juridinio asmens <strong>' . $result['ja_pavadinimas'] .  '</strong> informaciją.<br>'
+    . 'Tačiau Jūsų prenumeratų limitas (' . SUBSCRIPTION_LIMIT . ') jau išnaudotas. Norėdami sukurti daugiau prenumeratų, prašome rašyti svetainės administratoriui adresu <em><a href="mailto:' . ADMIN_EMAIL . '">' . ADMIN_EMAIL . '</a><em>.';
 } else {
     // Generate a verification ID
     $verification_id = bin2hex(random_bytes(10));
 
     // Insert the subscription data into the subscriptions table
     $subscriptionQuery = $db->prepare('
-    INSERT INTO subscriptions (email, ja_kodas, verification_id, created_at)
-    VALUES (:email, :ja_kodas, :verification_id, :created_at)
+        INSERT INTO subscriptions (email, ja_kodas, verification_id, created_at)
+        VALUES (:email, :ja_kodas, :verification_id, :created_at)
     ');
     $subscriptionQuery->bindValue(':email', $email, SQLITE3_TEXT);
     $subscriptionQuery->bindValue(':ja_kodas', $ja_kodas, SQLITE3_INTEGER);
     $subscriptionQuery->bindValue(':verification_id', $verification_id, SQLITE3_TEXT);
     $subscriptionQuery->bindValue(':created_at', TIMESTAMP, SQLITE3_TEXT);
-    
+
     // Send confirmation email
     $subject = 'Patvirtinkite informacijos prenumeratą';
     $message = 'Sveiki,<br><br>';
     $message .= 'Jūsų el. paštas buvo nurodytas svetainėje „Juridinių asmenų paieška“ prenumeruojant juridinio asmens <strong>' . $result['ja_pavadinimas'] .  '</strong> informaciją.<br>';
-    $message .= 'Galima sudaryti ne daugiau nei 10-ties juridinių asmenų informacinių pranešimų prenumeratų. Prenumeratos nemokamos. <br>';
-    $message .= 'Prenumeratos teikiamos be tikslumo ar išsamumo garantijų.<br><br>';
+    $message .= 'Galima sudaryti ne daugiau nei  (' . SUBSCRIPTION_LIMIT . ') nemokamų juridinių asmenų informacinių pranešimų prenumeratų. <br>';
+    //$message .= 'Prenumeratos teikiamos be tikslumo ar išsamumo garantijų.<br><br>';
     $message .= 'Prašome patvirtinti prenumeratą paspaudžiant šią nuorodą:<br>';
     $message .= '<strong><a href="' . BASE_URL . 'subscribe.php?person=' . $ja_kodas . '&verify=' . $verification_id . '">patvirtinti prenumeratą</a></strong>';
+    if ($subscriptionData['count'] > 0) {
+        $message .= '<br><br>' . $manageString;
+    }
     $message .= '<br><br><br>Jei informacijos neprenumeravote, tiesiog ignoruokite šį laišką.<br><br>';
 }
 

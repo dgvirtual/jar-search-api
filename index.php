@@ -80,7 +80,7 @@ if (!file_exists(DBFILE)) {
         <p><em>Programoje naudojami Juridinių asmenų registro atviri duomenys (<a href="#dataDocs">plačiau</a>).</em></p>
 
         <div class="alert alert-success mt-3" role="alert">
-            <strong>NAUJA!</strong> Galite <strong> užsiprenumeruoti</strong> pranešimus apie Juridinių asmenų duomenų pakeitimus. Tai galite padaryti paspaudę <button class="btn btn-outline-danger"><i class="bi bi-bell"></i></button> ties juridinio asmens įrašu paieškos lentelėje.
+            <strong>NAUJA!</strong> Galite <strong> užsiprenumeruoti</strong> pranešimus apie Juridinių asmenų duomenų pakeitimus. Tai galite padaryti paspaudę <button class="btn btn-danger"><i class="bi bi-bell"></i></button> ties juridinio asmens įrašu paieškos lentelėje.
         </div>
 
         <div class="row" style="max-width:600px;">
@@ -241,8 +241,8 @@ if (!file_exists(DBFILE)) {
                             <td x-text="person.stat_pavadinimas"></td>
                             <td class="text-end">
                                 <div class="btn-group">
-                                    <a href="#" class="btn btn-success btn-sm" title="Peržiūrėti duomenis" class="text-success" @click.prevent="fetchDetails(person.ja_kodas)" data-bs-toggle="modal" data-bs-target="#detailsModal"><i class="bi bi-search"></i></a>
-                                    <a href="#" class="btn btn-danger btn-sm" title="Prenumeruoti pakeitimus" class="text-danger" @click.prevent="subscribe(person.ja_kodas)" data-bs-toggle="modal" data-bs-target="#subscribeModal"><i class="bi bi-bell"></i></a>
+                                    <a href="#" class="btn btn-outline-success btn-sm" title="Peržiūrėti duomenis" class="text-success" @click.prevent="fetchDetails(person.ja_kodas)" data-bs-toggle="modal" data-bs-target="#detailsModal"><i class="bi bi-search"></i></a>
+                                    <a href="#" class="btn btn-danger btn-sm" title="Prenumeruoti informacinius pranešimus" class="text-danger" @click.prevent="subscribe(person.ja_kodas)" data-bs-toggle="modal" data-bs-target="#subscribeModal"><i class="bi bi-bell"></i></a>
                                 </div>
                             </td>
                         </tr>

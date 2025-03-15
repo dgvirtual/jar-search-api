@@ -47,7 +47,7 @@ function extractEmail($string)
 function emailAdmin($subject, $message): bool
 {
     $headers = "From: " . FROM_EMAIL;
-    return mail(ADMIN_EMAIL, $subject, $message, $headers,  "-f" . extractEmail(FROM_EMAIL));
+    return mail(ADMIN_EMAIL, $subject, $message, $headers, "-f" . extractEmail(FROM_EMAIL));
 }
 
 
@@ -185,4 +185,49 @@ if (! function_exists('dd')) {
 
         exit;
     }
+}
+
+/**
+ * Should this be moved to classes, db class?
+ * @param object $db
+ * @param string $email
+ * @return array $subscriptionData
+ */
+function getVerifiedSubscriptions($db, $email): array
+{
+    // Load environment variables
+    $unlimitedEmails = array_map('trim', explode(',', SUBSCRIPTIONS_UNLIMITED));
+    $subscriptionLimit = (int)SUBSCRIPTION_LIMIT;
+
+    // Retrieve the list of verified subscriptions
+    $subscriptionQuery = $db->prepare('SELECT verification_id FROM subscriptions WHERE email = :email AND verified = 1');
+    $subscriptionQuery->bindValue(':email', $email, SQLITE3_TEXT);
+    $subscriptionResult = $subscriptionQuery->execute();
+
+    $verificationIds = [];
+    while ($row = $subscriptionResult->fetchArray(SQLITE3_ASSOC)) {
+        $verificationIds[] = $row['verification_id'];
+    }
+
+    $subscriptionCount = count($verificationIds);
+
+    if ($subscriptionCount === 0) {
+        return [
+            'count' => 0,
+            'maxedOut' => false,
+            'manageKey' => ''
+        ];
+    }
+
+    // Calculate the manage key
+    $manageKey = substr(hash('sha256', implode('', $verificationIds)), 0, 30);
+
+    // Check if the email is in the list of unlimited subscriptions
+    $unlimited = in_array($email, $unlimitedEmails);
+
+    return [
+        'count' => $subscriptionCount,
+        'maxedOut' => $unlimited ? false : $subscriptionCount >= $subscriptionLimit,
+        'manageKey' => $manageKey
+    ];
 }
