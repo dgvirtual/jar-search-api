@@ -114,31 +114,33 @@ if (saltedEmailHash($email) === $key) {
             <form method="post" action="manage.php">
                 <input type="hidden" name="email" value="' . htmlspecialchars($email) . '">
                 <input type="hidden" name="key" value="' . htmlspecialchars($key) . '">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Kodas</th>
-                            <th>Pavadinimas</th>
-                            <th>Prenumeruota</th>
-                            <th>Patvirtinta</th>
-                        </tr>
-                    </thead>
-                    <tbody>';
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Kodas</th>
+                                <th>Pavadinimas</th>
+                                <th>Prenumeruota</th>
+                                <th>Patvirtinta</th>
+                            </tr>
+                        </thead>
+                        <tbody>';
 
-    foreach ($subscriptions as $subscription) {
-        $checked = $subscription['verified'] ? 'checked' : '';
+        foreach ($subscriptions as $subscription) {
+            $checked = $subscription['verified'] ? 'checked' : '';
+            $htmlContent .= '
+                <tr>
+                    <td>' . $subscription['ja_kodas'] . '</td>
+                    <td>' . htmlspecialchars($subscription['ja_pavadinimas']) . '</td>
+                    <td>' . substr($subscription['created_at'], 0, 10) . '</td>
+                    <td><input type="checkbox" name="subscriptions[' . htmlspecialchars($subscription['id']) . ']" ' . $checked . '></td>
+                </tr>';
+        }
+
         $htmlContent .= '
-            <tr>
-                <td>' . $subscription['ja_kodas'] . '</td>
-                <td>' . htmlspecialchars($subscription['ja_pavadinimas']) . '</td>
-                <td>' . substr($subscription['created_at'], 0, 10) . '</td>
-                <td><input type="checkbox" name="subscriptions[' . htmlspecialchars($subscription['id']) . ']" ' . $checked . '></td>
-            </tr>';
-    }
-
-    $htmlContent .= '
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
                 <p class="alert alert-info">Išsaugojus formą nepažymėtos prenumeratos bus ištrintos iš Jūsų sąrašo.</p>
                 <div class="btn-group">
                     <button type="submit" class="btn btn-primary">Išsaugoti</button>
