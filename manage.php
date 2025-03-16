@@ -104,14 +104,14 @@ if (saltedEmailHash($email) === $key) {
     // Display the subscriptions data in a form
     $htmlContent = '
         <div class="my-3" style="max-width: 900px;">
-            <h2>Tvarkyti prenumeratas</h2>';
+            <h1 class="display-5">Tvarkyti prenumeratas</h1>';
 
     if (!in_array($email, $unlimitedEmails)) {
         $htmlContent .= '<p>Galite prenumeruoti iki ' . SUBSCRIPTION_LIMIT . ' juridinių asmenų pranešimus.</p>';
     }
 
     $htmlContent .= '
-            <form method="post" action="manage.php">
+            <form method="post" action="manage.php?email=' . urlencode($email) . '&key=' . $key . '">
                 <input type="hidden" name="email" value="' . htmlspecialchars($email) . '">
                 <input type="hidden" name="key" value="' . htmlspecialchars($key) . '">
                 <div class="table-responsive">
@@ -144,7 +144,7 @@ if (saltedEmailHash($email) === $key) {
                 <p class="alert alert-info">Išsaugojus formą nepažymėtos prenumeratos bus ištrintos iš Jūsų sąrašo.</p>
                 <div class="btn-group">
                     <button type="submit" class="btn btn-primary">Išsaugoti</button>
-                    <button type="button" class="btn btn-secondary" onclick="window.location.href=\'' . BASE_URL . '\'">Atšaukti</button>
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href=\'' . BASE_URL . '\'">Grįžti į svetainę</button>
                 </div>
             </form>
         </div>';

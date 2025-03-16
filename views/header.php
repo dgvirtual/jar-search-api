@@ -62,7 +62,7 @@ if (count(get_included_files()) == 1) {
 </head>
 
 <body>
-    <div class="container" x-data="legalPersonApp()">
+    <div class="container"<?php if (basename($_SERVER['SCRIPT_NAME']) === 'index.php') echo ' x-data="legalPersonApp()"'; ?>>
 
         <nav class="navbar bg-body-tertiary">
             <div class="container">
