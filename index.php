@@ -18,6 +18,7 @@ if (!file_exists(DBFILE)) {
 <div class="row">
     <div class="col-12 col-lg-8 col-xl-6 order-2 order-lg-1 my-5">
 
+        <h1 class="display-4 d-block d-lg-none mb-3">Atlikti paiešką</h1>
         <div class="row">
             <div class="col col-12">
                 <div class="form-floating mb-3">
@@ -166,13 +167,13 @@ if (!file_exists(DBFILE)) {
             </li>
             <!-- Next page button -->
             <li class="page-item" :class="{ disabled: page === Math.ceil(count.total / limit) }">
-                <a title="5 į priekį" class="page-link" href="#" @click.prevent="changePage(page + 1)"><i
+                <a title="1 į priekį" class="page-link" href="#" @click.prevent="changePage(page + 1)"><i
                         class="bi bi-chevron-right"></i></a>
             </li>
             <!-- 5 pages forward button -->
             <li class="page-item" x-show="count.total > (count.limit * 5)"
                 :class="{ disabled: page + 5 >= Math.ceil(count.total / limit) }">
-                <a title="1 į priekį" class="page-link" href="#" @click.prevent="changePage(page + 5)"><i
+                <a title="5 į priekį" class="page-link" href="#" @click.prevent="changePage(page + 5)"><i
                         class="bi bi-chevron-double-right"></i></a>
             </li>
             <!-- Last page button -->
