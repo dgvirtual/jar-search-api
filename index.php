@@ -9,15 +9,14 @@ if (!file_exists(DBFILE)) {
 
 <?php include(BASE_DIR . 'views/header.php'); ?>
 
-<p class="mt-3">Čia galima atlikti informatyvių paieškų, ir jūsų neerzins <em>Captcha</em> paveikslėliai. Norite
-    sužinoti, <em>kiek įmonių įregistruota jūsų name</em>? Ar name, gatvėje, miestelyje <em>yra religinių
+<p class="mt-3">Norite sužinoti, <em>kiek įmonių įregistruota jūsų name</em>? Ar name, gatvėje, miestelyje <em>yra religinių
         bendruomenių</em>? Ar <em>Jūsų planuojamame įsigyti būste nėra įregistruotų įmonių</em>? Kiek mažųjų bendrijų
-    yra jūsų miestelyje? O kiek - Lietuvoje? Visa tai galite sužinoti atlikę paiešką čia.</p>
+    yra jūsų miestelyje? O kiek – Lietuvoje? Visa tai galite sužinoti čia. Ir – Jūsų neerzins <em>Captcha</em> paveikslėliai. </p>
 <p><em>Programoje naudojami Juridinių asmenų registro atviri duomenys (<a href="#dataDocs">plačiau</a>).</em></p>
 
 
 <div class="row">
-    <div class="col-12 col-lg-8 col-xl-6">
+    <div class="col-12 col-lg-8 col-xl-6 order-2 order-lg-1 my-5">
 
         <div class="row">
             <div class="col col-12">
@@ -119,13 +118,15 @@ if (!file_exists(DBFILE)) {
             </div>
         </div>
     </div>
-    <div class="col-12 col-lg-4 col-xl-6">
+    <div class="col-12 col-lg-4 col-xl-6  order-1 order-lg-2 my-5">
         <div class="bg-light p-5 rounded">
-            <h1 class="display-4">NAUJA!</h1>
-            <p class="lead">Galite <strong>užsiprenumeruoti</strong> pranešimus apie Juridinių asmenų duomenų pakeitimus ir jų viešus pranešimus.</p>
-            <hr class="my-4">
-            <p>Tai galite padaryti paspaudę <button class="btn btn-sm btn-danger"><i class="bi bi-bell"></i></button> ties juridinio asmens įrašu paieškos rezultatų lentelėje.</p>
-            <h2 class="display-6">Jau turite prenumeratų?</h2>
+            <div class="d-none d-lg-block">
+                <h1 class="display-4">NAUJA!</h1>
+                <p class="lead">Galite <strong>užsiprenumeruoti</strong> pranešimus apie Juridinių asmenų duomenų pakeitimus ir jų viešus pranešimus.</p>
+                <hr class="my-4">
+                <p>Tai galite padaryti paspaudę <button class="btn btn-sm btn-danger"><i class="bi bi-bell"></i></button> ties juridinio asmens įrašu paieškos rezultatų lentelėje.</p>
+            </div>
+            <h2 class="display-6">Norite tvarkyti prenumeratas?</h2>
             <p>Gaukite nuorodą į jų tvarkymo puslapį įvesdami savo el. pašto adresą:</p>
             <form method="get" action="manage.php">
                 <div class="input-group mb-3">
