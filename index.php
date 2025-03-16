@@ -125,7 +125,7 @@ if (!file_exists(DBFILE)) {
             <p class="lead">Galite <strong>užsiprenumeruoti</strong> pranešimus apie Juridinių asmenų duomenų pakeitimus ir jų viešus pranešimus.</p>
             <hr class="my-4">
             <p>Tai galite padaryti paspaudę <button class="btn btn-sm btn-danger"><i class="bi bi-bell"></i></button> ties juridinio asmens įrašu paieškos rezultatų lentelėje.</p>
-             <h2 class="display-6">Jau turite prenumeratų?</h2>
+            <h2 class="display-6">Jau turite prenumeratų?</h2>
             <p>Gaukite nuorodą į jų tvarkymo puslapį įvesdami savo el. pašto adresą:</p>
             <form method="get" action="manage.php">
                 <div class="input-group mb-3">
@@ -424,10 +424,12 @@ if (!file_exists(DBFILE)) {
                     <li><strong>Kodas</strong>: Įveskite juridinio asmens kodą; galite įvesti ir daugiau nei vieną kodą,
                         tokiu atveju kodus atskirkite kableliais. Pvz., <code>123456789, 987654321</code>.</li>
                     <li><strong>Pavadinimas</strong>: Įveskite juridinio asmens pavadinimą arba jo dalį. Pvz.,
-                        <code>UAB Pavyzdinė įmonė</code>. Galima įvesti nepilnus žodžius. Bus ieškomi visi žodžiai.</li>
+                        <code>UAB Pavyzdinė įmonė</code>. Galima įvesti nepilnus žodžius. Bus ieškomi visi žodžiai.
+                    </li>
                     <li><strong>Adresas</strong>: Įveskite adresą arba jo dalį. Naudokite kabutes frazėms, pvz.,
                         <code>"Krokodilo 3-oji g." Vilnius</code>. <em>Pastaba:</em> šiame lauke galima naudoti tik
-                        pilnus žodžius.</li>
+                        pilnus žodžius.
+                    </li>
                     <li><strong>Teisinė forma</strong>: Pasirinkite teisinę formą iš sąrašo.</li>
                     <li><strong>Teisinis statusas</strong>: Pasirinkite teisinį statusą iš sąrašo.</li>
                     <li><strong>Registravimo data, nuo</strong>: Įveskite registravimo datą nuo (YYYY-MM-DD formatu).
