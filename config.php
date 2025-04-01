@@ -131,7 +131,7 @@ if (!defined("DBFILE"))
 // damn English... individualios įmonės, komanditinės ūkinės bendrijos ir tikrosios ūkinės bendrijos, jų filialai
 if (!defined("CODES_WITH_HIDDEN_NAMES"))
     define('CODES_WITH_HIDDEN_NAMES', '210, 211, 212, 220, 221, 222, 810, 811, 812');
-// išregistruotų statuso numeris
+// išregistruotų statuso numeris - nebenaudojamas nuo 2025-04-01
 if (!defined("DISREG_STATUS_CODE"))
     define('DISREG_STATUS_CODE', '10');
 
