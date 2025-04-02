@@ -30,10 +30,6 @@ if (isset($_GET['key']) && $_GET['key'] === PROXY_API_KEY) {
     exit;
 }
 
-if (!file_exists(DBFILE)) {
-    require_once(BASE_DIR . 'data/initialize-db.php');
-}
-
 $messageJ = '';
 $subjectJ = 'scrapjournal.php išvestis';
 
@@ -296,11 +292,8 @@ foreach ($entities as $entity) {
                 $individual_fail++;
             }
         }
-
     }
 }
-//echo 'statuses_list: ' . PHP_EOL;
-//var_dump($statuses_list);
 
 //here, execute the other scrap file:
 require_once(BASE_DIR . 'data/saveJournalToDb.php');
