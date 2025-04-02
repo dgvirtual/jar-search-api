@@ -1,9 +1,5 @@
-<?php
+<?php if (count(get_included_files()) == 1) die('This file is not meant to be accessed directly.');
 
-// require_once(__DIR__ . '/../config.php');
-// require_once(BASE_DIR . 'data/data-functions.php');
-// require_once(BASE_DIR . 'common/classes.php');
-// require_once(BASE_DIR . 'common/functions.php');
 
 if (!isset($db)) {
     $db = new mySQLite3(BASE_DIR . DBFILE);
@@ -46,8 +42,8 @@ while ($row = $subscriptionsQuery->fetchArray(SQLITE3_ASSOC)) {
 
 // Prepare the insert query for notifications
 $notificationQuery = $db->prepare('
-    INSERT INTO notifications (email, person, subject, content, created_at)
-    VALUES (:email, :person, :subject, :content, :created_at)
+INSERT INTO notifications (email, person, subject, content, created_at)
+VALUES (:email, :person, :subject, :content, :created_at)
 ');
 
 $countEmailsToBeSent = 0;
