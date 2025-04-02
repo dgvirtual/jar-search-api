@@ -19,19 +19,20 @@ if (!isset($db)) {
 // Send emails
 $notificationQuery = $db->query('SELECT * FROM notifications WHERE sent_at IS NULL');
 
+$failedSending = 0; // Move this outside the loop
 while ($notification = $notificationQuery->fetchArray(SQLITE3_ASSOC)) {
     $email = $notification['email'];
     $subject = $notification['subject'];
     $content = $notification['content'];
 
-    $failedSending = 0;
     if (emailSubscriber($email, $subject, $content)) {
         $db->exec('UPDATE notifications SET sent_at = "' . date('Y-m-d H:i:s') . '" WHERE id = ' . $notification['id']);
     } else {
         $failedSending++;
     }
+}
 
-    if ($failedSending > 0) {
-        emailAdmin('Failed to send emails', "Failed to send $failedSending emails; attempts will be repeated tomorrow.");
-    }
+// Notify admin once if there are failures
+if ($failedSending > 0) {
+    emailAdmin('Failed to send emails', "Failed to send $failedSending emails; attempts will be repeated tomorrow.");
 }
