@@ -5,7 +5,6 @@ require_once(BASE_DIR . 'data/data-functions.php');
 require_once(BASE_DIR . 'common/classes.php');
 require_once(BASE_DIR . 'common/functions.php');
 
-
 // Check if the script is run from the command line with the correct parameter
 if (!isset($argv[1]) || $argv[1] !== 'run') {
     die('This script can only be run from the command line with the correct parameter.');
@@ -25,7 +24,9 @@ while ($notification = $notificationQuery->fetchArray(SQLITE3_ASSOC)) {
     $content = $notification['content'];
 
     $failedSending = 0;
-    if (emailSubscriber($email, $subject, $content)) {
+    // reset to false for production
+    $testing = false;
+    if (emailSubscriber($email, $subject, $content, $testing)) {
         $db->exec('UPDATE notifications SET sent_at = "' . date('Y-m-d H:i:s') . '" WHERE id = ' . $notification['id']);
     } else {
         $failedSending++;
@@ -35,3 +36,5 @@ while ($notification = $notificationQuery->fetchArray(SQLITE3_ASSOC)) {
         emailAdmin('Failed to send emails', "Failed to send $failedSending emails; attempts will be repeated tomorrow.");
     }
 }
+
+log_message('info', 'End sending emails');

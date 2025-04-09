@@ -921,10 +921,10 @@ class import
         (ja_kodas, ja_pavadinimas, adresas, ja_reg_data, form_kodas, stat_kodas, stat_data_nuo, formavimo_data)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         foreach ($rows as $data) {
-            $stmt->bindValue(1, $data[0], SQLITE3_INTEGER); // ja_kodas            
+            $stmt->bindValue(1, $data[0], SQLITE3_INTEGER); // ja_kodas
             $stmt->bindValue(2, $data[1], SQLITE3_TEXT);    // ja_pvadinimas
             $stmt->bindValue(3, $data[2], SQLITE3_TEXT);    // adresas
-            $stmt->bindValue(4, $data[3], SQLITE3_TEXT);    // ja_reg_data 
+            $stmt->bindValue(4, $data[3], SQLITE3_TEXT);    // ja_reg_data
             $stmt->bindValue(5, $data[4], SQLITE3_INTEGER); // form_kodas
             //$stmt->bindValue(6, $data[5], SQLITE3_TEXT);    // form_pavadinimas
             $stmt->bindValue(6, $data[6], SQLITE3_INTEGER); // stat_kodas        isreg_data/text

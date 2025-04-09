@@ -51,7 +51,7 @@ function emailAdmin($subject, $message): bool
 }
 
 
-function emailSubscriber($email, $subject, $message): bool
+function emailSubscriber($email, $subject, $message, $testing = false): bool
 {
     $headers = "From: " . FROM_EMAIL . "\r\n";
     $headers .= "MIME-Version: 1.0\r\n";
@@ -67,8 +67,33 @@ function emailSubscriber($email, $subject, $message): bool
             </body>
             </html>
             ';
+    if ($testing) {
+        // log the email target and subject line and time to the log file
+        log_fake_email('info', 'Email would be sent to: ' . $email . ' with subject: ' . $subject);
+        return  true;
+    }
     // Set envelope sender with -f
     return mail($email, $subject, $message, $headers, "-f" . extractEmail(FROM_EMAIL));
+
+}
+
+function log_fake_email($level, $message): void
+{
+    $logFilePath = BASE_DIR . 'writable/logs/' . date('Y-m-d') . '_fake_emails.log';
+    $logData = date('Y-m-d H:i:s') . " [$level] - $message" . PHP_EOL;
+    file_put_contents($logFilePath, $logData, FILE_APPEND);
+}
+
+function log_message($level, $message): void
+{
+    $logFilePath = BASE_DIR . 'writable/logs/' . date('Y-m-d') . '_testing.log';
+    $logData = date('Y-m-d H:i:s') . " [$level] - $message" . PHP_EOL;
+    file_put_contents($logFilePath, $logData, FILE_APPEND);
+}
+
+function getBaseUrl()
+{
+    return BASE_URL;
 }
 
 function base_url()
@@ -234,5 +259,5 @@ function getVerifiedSubscriptions($db, $email): array
 
 function saltedEmailHash($email)
 {
-    return substr(hash('sha256', strtolower($email) . SALT), 0 , 30);
+    return substr(hash('sha256', strtolower($email) . SALT), 0, 30);
 }

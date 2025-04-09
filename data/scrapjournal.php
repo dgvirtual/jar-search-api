@@ -14,12 +14,13 @@
  * debug= - echo data to the browser
  */
 
-ini_set('max_execution_time', '200');
+ini_set('max_execution_time', '500');
 require_once(__DIR__ . '/../config.php');
 require_once(BASE_DIR . 'data/data-functions.php');
 require_once(BASE_DIR . 'common/classes.php');
 require_once(BASE_DIR . 'common/functions.php');
 
+$targetedScrapping = false;
 
 if (isset($_GET['key']) && $_GET['key'] === PROXY_API_KEY) {
     // do nothing
@@ -43,6 +44,8 @@ if (!isset($db)) {
 
 $databaseCheckResult = $db->checkAndReindex();
 
+log_message('info', 'Start scrapjournal script');
+
 /**
  * statistics gathering and update of persons table block
  */
@@ -51,9 +54,10 @@ $sendEmail = ((isset($argv[1]) && in_array('sendemail', $argv)) || isset($_GET['
 
 // first argument should be journal, second - the number of journal
 if (isset($argv[2]) && in_array('journal', $argv) || isset($_GET['journal'])) {
+    $targetedScrapping = true;
     $pdf_url = RC_WEB . JOURNAL_DOWNLOAD_URL . ($argv[2] ?? $_GET['journal']);
 } else {
-
+    log_message('info', 'Getting journal page from RC');
     $webpage = file_get_contents(RC_WEB . JOURNAL_LIST_URL);
 
     if ($webpage === false) {
@@ -62,13 +66,18 @@ if (isset($argv[2]) && in_array('journal', $argv) || isset($_GET['journal'])) {
 
     // Find the first occurrence of the download link using regex
     if (preg_match('/<a href="download\.do\?oid=(\d+)" target="_blank">/', $webpage, $matches)) {
-        $oid = $matches[1];
-        $pdf_url = RC_WEB . JOURNAL_DOWNLOAD_URL . $oid;
+        $journalId = $matches[1];
+
+        if ($db->getSetting('latest_journal') === (string) $journalId) {
+            die('The same journal, no need to update.');
+        }
+
+        $pdf_url = RC_WEB . JOURNAL_DOWNLOAD_URL . $journalId;
     } else {
         die("Failed to find the download link.");
     }
 }
-
+log_message('info', 'Start download of pdf file');
 // Download the PDF
 $pdf_content = file_get_contents($pdf_url);
 if ($pdf_content === false) {
@@ -86,11 +95,14 @@ $command = 'pdftohtml -nodrm ' . escapeshellarg($file_path);
 $full_command = 'cd ' . escapeshellarg($directory) . ' && ' . $command;
 exec($full_command, $output, $return_var);
 
+log_message('info', 'Reading the html stripped from pdf file and start parsing');
 // input html
 $html = file_get_contents(BASE_DIR . 'writable/contents.html');
 
 // Parse the HTML and get the entities
 $entities = parseCRJournal($html);
+
+log_message('info', 'Reading the html stripped from pdf file and start parsing');
 
 // get data for updating the data retrieved
 $query = $db->query("SELECT * FROM statuses");
@@ -299,12 +311,14 @@ foreach ($entities as $entity) {
 
     }
 }
-//echo 'statuses_list: ' . PHP_EOL;
-//var_dump($statuses_list);
+// if we got this far, assume journal was processed
+if (!$targetedScrapping) {
+    $db->updateSetting('latest_journal', $journalId);
+}
 
-//here, execute the other scrap file:
+log_message('info', 'Updating of database is done, now run saveJounalToDb.php');
+
 require_once(BASE_DIR . 'data/saveJournalToDb.php');
-
 
 $databaseCheckResult2 = $db->checkAndReindex();
 
