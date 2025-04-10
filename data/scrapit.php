@@ -75,7 +75,7 @@ if (isset($argv[1]) && in_array('update', $argv)) {
     if (isset($noPurged)) {
         $message .= "Pašalinta pavadinimų iš individualių įmonių ir komanditinių ūkinių bendrijų sąrašo pasikeitus teisinei formai: " . $noPurged . "\n";
     }
-    $message .= "Viso veikiančių individualių įmonių / komanditinių ūkinių bendrijų nesutvarkytais pavadinimais: " . $stats['targetRecords'] . "\n";
+    $message .= "Viso individualių įmonių / komanditinių ūkinių bendrijų nesutvarkytais pavadinimais: " . $stats['targetRecords'] . "\n";
     $message .= "Gauta pavadinimų iš viso: " . $stats['totalRecords'] . "\n";
     $message .= "Šiandien atnaujinta pavadinimų: " . $noUpdated . "\n\n=======================\n\n";
     $message .= getDailyLogContent();
@@ -94,7 +94,7 @@ if ((isset($argv[1]) && in_array('report', $argv)) || isset($_GET['report'])) {
         echo "<pre>";
     }
 
-    $message .= "Viso veikiančių individualių įmonių ir komanditinių ūkinių bendrijų nesutvarkytais pavadinimais: " . $stats['targetRecords'] . "\r\n";
+    $message .= "Viso individualių įmonių ir komanditinių ūkinių bendrijų nesutvarkytais pavadinimais: " . $stats['targetRecords'] . "\r\n";
     $message .= "Gautų (sutvarkytų) pavadinimų iš viso: " . $stats['totalRecords'] . "\r\n";
     $message .= "Gautų (sutvarkytų) pavadinimų šiandien: " . $stats['recordsToday'] . "\r\n";
     $message .= "\n=======================\n\n";

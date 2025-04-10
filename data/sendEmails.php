@@ -18,12 +18,12 @@ if (!isset($db)) {
 // Send emails
 $notificationQuery = $db->query('SELECT * FROM notifications WHERE sent_at IS NULL');
 
+$failedSending = 0; // Move this outside the loop
 while ($notification = $notificationQuery->fetchArray(SQLITE3_ASSOC)) {
     $email = $notification['email'];
     $subject = $notification['subject'];
     $content = $notification['content'];
 
-    $failedSending = 0;
     // reset to false for production
     $testing = false;
     if (emailSubscriber($email, $subject, $content, $testing)) {
@@ -31,7 +31,8 @@ while ($notification = $notificationQuery->fetchArray(SQLITE3_ASSOC)) {
     } else {
         $failedSending++;
     }
-
+}
+    // Notify admin once if there are failures
     if ($failedSending > 0) {
         emailAdmin('Failed to send emails', "Failed to send $failedSending emails; attempts will be repeated tomorrow.");
     }
