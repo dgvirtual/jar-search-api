@@ -34,48 +34,29 @@ foreach ($entities as $entity) {
     $result = $query->execute();
 }
 
-log_message('info', 'Retrieving subscriptions data');
+log_message('info', 'Retrieving today\'s journal entries');
 
-// Retrieve all subscriptions
-$subscriptionsQuery = $db->query('SELECT * FROM subscriptions WHERE verified = 1');
-$subscriptions = [];
-
-while ($row = $subscriptionsQuery->fetchArray(SQLITE3_ASSOC)) {
-    $subscriptions[] = $row;
-}
-
-log_message('info', 'Filling the notifications table');
-
-// Prepare the insert query for notifications
-$notificationQuery = $db->prepare('
-INSERT INTO notifications (email, person, subject, content, created_at)
-VALUES (:email, :person, :subject, :content, :created_at)
-');
+// Select all journal entries added today
+$journalQuery = $db->prepare('SELECT * FROM journal WHERE created_at LIKE :created_at');
+$journalQuery->bindValue(':created_at', date('Y-m-d') . ' %', SQLITE3_TEXT);
+$journalResults = $journalQuery->execute();
 
 $countEmailsToBeSent = 0;
 
-// Deduplicate notifications by processing each journal entry only once per ja_kodas
-$processedJournalEntries = [];
+log_message('info', 'Start filling notifications table');
 
-foreach ($subscriptions as $subscription) {
-    // Search for matches in the journal table
-    $journalQuery = $db->prepare('SELECT * FROM journal WHERE ja_kodas = :ja_kodas AND created_at LIKE :created_at');
-    $journalQuery->bindValue(':ja_kodas', $subscription['ja_kodas'], SQLITE3_INTEGER);
-    $journalQuery->bindValue(':created_at', date('Y-m-d') . ' %', SQLITE3_TEXT);
-    $journalResults = $journalQuery->execute();
+while ($journalEntry = $journalResults->fetchArray(SQLITE3_ASSOC)) {
+    // Retrieve all subscriptions matching the ja_kodas of the journal entry
+    $subscriptionsQuery = $db->prepare('SELECT * FROM subscriptions WHERE ja_kodas = :ja_kodas AND verified = 1');
+    $subscriptionsQuery->bindValue(':ja_kodas', $journalEntry['ja_kodas'], SQLITE3_INTEGER);
+    $subscriptionsResults = $subscriptionsQuery->execute();
 
-    while ($journalEntry = $journalResults->fetchArray(SQLITE3_ASSOC)) {
-        // Skip if this journal entry has already been processed for this ja_kodas
-        $uniqueKey = $journalEntry['ja_kodas'] . '-' . $journalEntry['journal_no'];
-        if (isset($processedJournalEntries[$uniqueKey])) {
-            continue;
-        }
-        $processedJournalEntries[$uniqueKey] = true;
-
+    while ($subscription = $subscriptionsResults->fetchArray(SQLITE3_ASSOC)) {
         // Form the notification content
         $subject = "Naujas pranešimas apie juridinį asmenį " . $journalEntry['ja_pavadinimas'];
         $content = "<strong>Pranešimas:</strong><br> " . trim($journalEntry['content']);
         $content .= '<br><br>RC informacinių pranešimų žurnalo numeris: ' . $journalEntry['journal_no'];
+        $content .= '<br><br>Žurnalo sekcija: <strong>' . $journalEntry['section'] . '</strong>';
         $content .= '<br><br><a href="' . RC_WEB . JOURNAL_LIST_URL . '">RC žurnalų puslapis</a>';
 
         // Check if a similar notification already exists
@@ -89,14 +70,16 @@ foreach ($subscriptions as $subscription) {
             continue;
         }
 
-        // Bind values to the placeholders
+        // Prepare and execute the insert query for notifications
+        $notificationQuery = $db->prepare('
+            INSERT INTO notifications (email, person, subject, content, created_at)
+            VALUES (:email, :person, :subject, :content, :created_at)
+        ');
         $notificationQuery->bindValue(':email', $subscription['email'], SQLITE3_TEXT);
         $notificationQuery->bindValue(':person', $subscription['ja_kodas'], SQLITE3_TEXT);
         $notificationQuery->bindValue(':subject', $subject, SQLITE3_TEXT);
         $notificationQuery->bindValue(':content', $content, SQLITE3_TEXT);
         $notificationQuery->bindValue(':created_at', date('Y-m-d H:i:s'), SQLITE3_TEXT);
-
-        // Execute the insert query for notifications
         $notificationQuery->execute();
 
         $countEmailsToBeSent++;

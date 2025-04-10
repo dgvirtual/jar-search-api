@@ -32,10 +32,10 @@ while ($notification = $notificationQuery->fetchArray(SQLITE3_ASSOC)) {
         $failedSending++;
     }
 }
-    // Notify admin once if there are failures
-    if ($failedSending > 0) {
-        emailAdmin('Failed to send emails', "Failed to send $failedSending emails; attempts will be repeated tomorrow.");
-    }
+// Notify admin once if there are failures
+if ($failedSending > 0) {
+    emailAdmin('Failed to send emails', "Failed to send $failedSending emails; attempts will be repeated tomorrow.");
 }
+
 
 log_message('info', 'End sending emails');
