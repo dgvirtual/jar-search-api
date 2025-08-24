@@ -141,17 +141,23 @@ function scrapHtml(int $id, $date = null)
     // 1. Get web page content
     $url = RC_WEB . SCRAP_URL . $id;
     $html = file_get_contents($url);
+
     if ($html === false) {
         return ['success' => $success];
     }
 
     $warning_text = '<span class="text-danger fw-bold">Statistine prasme mažai tikėtina, bet įmanoma, kad duomenys yra pasikeitę per pastarąsias 24 valandas</span>.';
-    $targetDivRegex = '/<div\s+align="right">Šiandien Jūsų atliktų užklausų skaičius:\s*(\d+)<\/div>/';
+    // Match "kodas <b>$id</b>"
+    //$targetDivRegex = '/<div\s+align="right">Šiandien Jūsų atliktų užklausų skaičius:\s*(\d+)<\/div>/';
+    $targetDivRegex = '/kodas\s*<b>' . preg_quote($id, '/') . '<\/b>/';
+    // TODO: need to check how the following code behaves on exhausted limit, strings might have changed
     if (preg_match('/Jūs viršijote leistiną dienos limitą/', $html, $matches)) {
-        $remaining = 'Svetainės užklausų limitas RC sistemoje viršytas (200 užklausų). ' . $warning_text;
+        $remaining = 'Svetainės užklausų limitas RC sistemoje viršytas (100 užklausų). ' . $warning_text;
     } elseif (preg_match($targetDivRegex, $html, $matches)) {
-        $number = intval($matches[1]);
-        $remaining = 'Patikrinimų RC viešoje paieškoje šiandien: ' . $number . '/200 (liko ' . 200 - $number . ')';
+        // now the number is not captured from the page, no need to extract it; all we check for is existance of a string?
+        //$number = intval($matches[1]);
+        //$remaining = 'Patikrinimų RC viešoje paieškoje šiandien: ' . $number . '/100 (liko ' . (100 - $number) . ')';
+        $remaining = '';
         $success = true;
     } else {
         $remaining = 'Nepavyko gauti patikrinimo duomenų iš RC. ' . $warning_text;
