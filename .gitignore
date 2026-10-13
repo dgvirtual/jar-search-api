@@ -3,3 +3,4 @@ writable/*
 adminer*
 .env
 test.php
+libSqliteIcu.so

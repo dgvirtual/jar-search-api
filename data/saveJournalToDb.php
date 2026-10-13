@@ -1,4 +1,8 @@
-<?php if (count(get_included_files()) == 1) die('This file is not meant to be accessed directly.');
+<?php
+
+if (count(get_included_files()) == 1) {
+    die('This file is not meant to be accessed directly.');
+}
 
 
 if (!isset($db)) {
@@ -96,9 +100,11 @@ $subscriberCountQuery = $db->query('SELECT COUNT(DISTINCT email) AS subscriber_c
 $subscriberCountResult = $subscriberCountQuery->fetchArray(SQLITE3_ASSOC);
 $subscriberCount = $subscriberCountResult['subscriber_count'];
 
-log_message('info', 'Starting external script to send emails');
-
-// Trigger the separate PHP process for sending emails
-if ($countEmailsToBeSent > 0) {
-    exec('php ' . BASE_DIR . 'data/sendEmails.php run > /dev/null 2>&1 &');
-}
+// NOTE: the email sending process is NOT started here. The caller
+// (scrapjournal.php) starts it only after it has completely finished writing to
+// the database (including the REINDEX inside checkAndReindex()). Starting it here
+// made the sender compete for the database write lock, so its
+// "UPDATE notifications SET sent_at = ..." statements failed and the same
+// notifications were sent again on every subsequent run.
+// The caller uses $countEmailsToBeSent (still defined below) to decide whether to
+// start the sender.

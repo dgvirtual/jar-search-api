@@ -343,7 +343,17 @@ if ((isset($argv[1]) && in_array('report', $argv)) || isset($_GET['report'])) {
     if ($sendEmail) {
         emailAdmin($subjectJ, $messageJ);
     }
-    exit;
 }
 
 $db->close();
+
+// All database writes are finished now (including the REINDEX that
+// checkAndReindex() performs when the integrity check reported a problem).
+// Only now is it safe to start the separate email-sending process: when it was
+// started before this point it competed for the database write lock, its
+// "UPDATE notifications SET sent_at = ..." statements failed, and therefore the
+// same notifications were re-sent on every subsequent run.
+if (!empty($countEmailsToBeSent)) {
+    log_message('info', 'Starting external script to send emails');
+    exec('php ' . BASE_DIR . 'data/sendEmails.php run > /dev/null 2>&1 &');
+}
